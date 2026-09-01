@@ -419,15 +419,6 @@ class ManagePaymentGateways extends Page
                                 ]),
                         ]),
                 ]),
-
-            Actions::make([
-                Action::make('save')
-                    ->label(__('messages.payment_gateways.save_settings'))
-                    ->icon('heroicon-m-check')
-                    ->action('save')
-                    ->color('primary')
-                    ->size('lg'),
-            ]),
         ]);
     }
 

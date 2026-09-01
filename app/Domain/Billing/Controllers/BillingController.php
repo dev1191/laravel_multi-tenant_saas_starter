@@ -72,9 +72,18 @@ class BillingController extends Controller
             'plan_price_id' => ['required', \Illuminate\Validation\Rule::exists(PlanPrice::class, 'id')],
         ]);
 
-        $planPrice = PlanPrice::with('plan')->findOrFail($validated['plan_price_id']);
         $tenant = tenant();
+        $subscription = $tenant->subscription('default');
 
+        // If tenant already has an active subscription, redirect to portal to manage plan upgrades/downgrades with proration
+        if ($subscription && $subscription->active() && ! $subscription->onGracePeriod()) {
+            $returnUrl = route('billing.index');
+            $portalUrl = $this->billingGateway->createCustomerPortalSession($tenant, $returnUrl);
+
+            return Inertia::location($portalUrl);
+        }
+
+        $planPrice = PlanPrice::with('plan')->findOrFail($validated['plan_price_id']);
         $returnUrl = route('billing.index');
         $checkoutUrl = $this->billingGateway->createCheckoutSession($tenant, $planPrice, $returnUrl);
 

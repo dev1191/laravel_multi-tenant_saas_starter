@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import {
@@ -63,14 +64,38 @@ const props = withDefaults(defineProps<Props>(), {
     plans: () => [],
 });
 
-const selectPlan = (priceId: number) => {
-    router.post('/billing/checkout', {
-        plan_price_id: priceId,
-    });
+const currentPlan = computed(() => props.plans.find((p) => p.is_current));
+const currentPlanAmount = computed(() => currentPlan.value?.price?.amount ?? 0);
+
+const getPlanActionLabel = (plan: Plan) => {
+    if (plan.is_current) return 'Current Plan';
+    if (!plan.price) return `Choose ${plan.name}`;
+
+    const isHigher = plan.price.amount > currentPlanAmount.value;
+
+    if (props.subscription && !props.subscription.on_grace_period && props.tenant.status === 'active') {
+        return isHigher ? `Upgrade to ${plan.name}` : `Downgrade to ${plan.name}`;
+    }
+
+    return isHigher ? `Upgrade to ${plan.name}` : `Choose ${plan.name}`;
 };
 
 const openPortal = () => {
     router.post('/billing/portal');
+};
+
+const selectPlan = (plan: Plan) => {
+    if (plan.is_current || !plan.price) return;
+
+    // If active recurring subscriber, redirect to billing portal to adjust plan safely with proration
+    if (props.subscription && !props.subscription.on_grace_period && props.tenant.status === 'active') {
+        openPortal();
+        return;
+    }
+
+    router.post('/billing/checkout', {
+        plan_price_id: plan.price.id,
+    });
 };
 
 const cancelSubscription = () => {
@@ -205,15 +230,21 @@ const breadcrumbs = [
                         <div class="mt-8">
                             <button
                                 v-if="!plan.is_current && plan.price"
-                                @click="selectPlan(plan.price.id)"
-                                class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold shadow transition cursor-pointer"
+                                @click="selectPlan(plan)"
+                                :class="[
+                                    plan.price.amount > currentPlanAmount
+                                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+                                        : 'border border-sidebar-border bg-background hover:bg-muted text-foreground font-medium',
+                                ]"
+                                class="w-full py-2.5 px-4 rounded-lg text-sm font-semibold transition cursor-pointer flex items-center justify-center gap-1.5"
                             >
-                                Upgrade to {{ plan.name }}
+                                <span>{{ getPlanActionLabel(plan) }}</span>
+                                <ExternalLink v-if="subscription && !subscription.on_grace_period && tenant.status === 'active'" class="w-3.5 h-3.5 opacity-60" />
                             </button>
                             <button
                                 v-else-if="plan.is_current"
                                 disabled
-                                class="w-full py-2.5 px-4 bg-gray-100 dark:bg-gray-800 text-muted-foreground rounded-lg text-sm font-medium cursor-not-allowed"
+                                class="w-full py-2.5 px-4 bg-gray-100 dark:bg-neutral-800 text-muted-foreground rounded-lg text-sm font-medium cursor-not-allowed"
                             >
                                 Current Plan
                             </button>

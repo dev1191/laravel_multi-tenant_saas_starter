@@ -170,3 +170,82 @@
         @apply bg-background text-foreground;
     }
 }
+
+:root {
+    --tenant-primary: #4f46e5;
+}
+
+/* Dynamic Tenant Theme Overrides */
+.bg-indigo-600, .bg-indigo-500 {
+    background-color: var(--tenant-primary, #4f46e5) !important;
+}
+
+.hover\:bg-indigo-700:hover, .hover\:bg-indigo-600:hover, .hover\:bg-indigo-500:hover {
+    filter: brightness(0.92);
+}
+
+.text-indigo-600, .text-indigo-500, .text-indigo-700 {
+    color: var(--tenant-primary, #4f46e5) !important;
+}
+
+.border-indigo-600, .border-indigo-500 {
+    border-color: var(--tenant-primary, #4f46e5) !important;
+}
+
+.focus\:ring-indigo-500:focus, .focus-visible\:ring-indigo-500:focus-visible {
+    --tw-ring-color: var(--tenant-primary, #4f46e5) !important;
+    border-color: var(--tenant-primary, #4f46e5) !important;
+}
+
+.bg-indigo-50 {
+    background-color: color-mix(in srgb, var(--tenant-primary, #4f46e5) 10%, transparent) !important;
+}
+
+.bg-indigo-100 {
+    background-color: color-mix(in srgb, var(--tenant-primary, #4f46e5) 15%, transparent) !important;
+}
+
+.dark .bg-indigo-950, .dark .bg-indigo-950\/60, .dark .bg-indigo-950\/80 {
+    background-color: color-mix(in srgb, var(--tenant-primary, #4f46e5) 25%, black) !important;
+}
+
+.dark .text-indigo-300, .dark .text-indigo-400 {
+    color: color-mix(in srgb, var(--tenant-primary, #4f46e5) 75%, white) !important;
+}
+
+/* Inertia NProgress Dynamic Tenant Brand Color */
+#nprogress .bar {
+    background-color: var(--tenant-primary, #4f46e5) !important;
+}
+
+#nprogress .peg {
+    box-shadow: 0 0 10px var(--tenant-primary, #4f46e5), 0 0 5px var(--tenant-primary, #4f46e5) !important;
+}
+
+#nprogress .spinner-icon {
+    border-top-color: var(--tenant-primary, #4f46e5) !important;
+    border-left-color: var(--tenant-primary, #4f46e5) !important;
+}
+
+/* Sidebar Active Nav Item Dynamic Tenant Brand Theme */
+[data-sidebar="menu-button"][data-active="true"] {
+    background-color: color-mix(in srgb, var(--tenant-primary, #4f46e5) 12%, transparent) !important;
+    color: var(--tenant-primary, #4f46e5) !important;
+    font-weight: 600 !important;
+}
+
+[data-sidebar="menu-button"][data-active="true"] svg {
+    color: var(--tenant-primary, #4f46e5) !important;
+}
+
+.dark [data-sidebar="menu-button"][data-active="true"] {
+    background-color: color-mix(in srgb, var(--tenant-primary, #4f46e5) 22%, transparent) !important;
+    color: color-mix(in srgb, var(--tenant-primary, #4f46e5) 80%, white) !important;
+}
+
+.dark [data-sidebar="menu-button"][data-active="true"] svg {
+    color: color-mix(in srgb, var(--tenant-primary, #4f46e5) 80%, white) !important;
+}
+
+
+

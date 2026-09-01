@@ -5,50 +5,48 @@ import PasswordInput from '@/components/PasswordInput.vue';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
+import AuthLayout from '@/layouts/AuthLayout.vue';
 import { store } from '@/routes/password/confirm';
-
-defineOptions({
-    layout: {
-        title: 'Confirm your password',
-        description:
-            'This is a secure area of the application. Please confirm your password before continuing.',
-    },
-});
 </script>
 
 <template>
-    <Head title="Confirm password" />
-
-    <Form
-        v-bind="store.form()"
-        reset-on-success
-        v-slot="{ errors, processing }"
+    <AuthLayout
+        :title="$t('auth.confirm_password') || 'Confirm your password'"
+        :description="$t('auth.confirm_password_desc') || 'This is a secure area of the application. Please confirm your password before continuing.'"
     >
-        <div class="space-y-6">
-            <div class="grid gap-2">
-                <Label htmlFor="password">Password</Label>
-                <PasswordInput
-                    id="password"
-                    name="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="current-password"
-                    autofocus
-                />
+        <Head :title="$t('auth.confirm_password') || 'Confirm password'" />
 
-                <InputError :message="errors.password" />
-            </div>
+        <Form
+            v-bind="store.form()"
+            reset-on-success
+            v-slot="{ errors, processing }"
+        >
+            <div class="space-y-6">
+                <div class="grid gap-2">
+                    <Label htmlFor="password">{{ $t('auth.password') }}</Label>
+                    <PasswordInput
+                        id="password"
+                        name="password"
+                        class="mt-1 block w-full"
+                        required
+                        autocomplete="current-password"
+                        autofocus
+                    />
 
-            <div class="flex items-center">
-                <Button
-                    class="w-full"
-                    :disabled="processing"
-                    data-test="confirm-password-button"
-                >
-                    <Spinner v-if="processing" />
-                    Confirm password
-                </Button>
+                    <InputError :message="errors.password" />
+                </div>
+
+                <div class="flex items-center">
+                    <Button
+                        class="w-full"
+                        :disabled="processing"
+                        data-test="confirm-password-button"
+                    >
+                        <Spinner v-if="processing" />
+                        {{ $t('auth.confirm_password') || 'Confirm password' }}
+                    </Button>
+                </div>
             </div>
-        </div>
-    </Form>
+        </Form>
+    </AuthLayout>
 </template>

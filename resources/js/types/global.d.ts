@@ -19,6 +19,8 @@ declare module '@inertiajs/core' {
             name: string;
             auth: Auth;
             sidebarOpen: boolean;
+            locale?: string;
+            translations?: Record<string, any>;
             [key: string]: unknown;
         };
     }
@@ -29,5 +31,6 @@ declare module 'vue' {
         $inertia: typeof Router;
         $page: Page;
         $headManager: ReturnType<typeof createHeadManager>;
+        $t: (key: string, replacements?: Record<string, string | number>) => string;
     }
 }

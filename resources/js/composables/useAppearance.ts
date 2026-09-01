@@ -8,7 +8,15 @@ export type UseAppearanceReturn = {
     appearance: Ref<Appearance>;
     resolvedAppearance: ComputedRef<ResolvedAppearance>;
     updateAppearance: (value: Appearance) => void;
+    updateBrandColor: (color: string) => void;
 };
+
+export function updateBrandColor(color: string): void {
+    if (typeof document === 'undefined' || !color) {
+        return;
+    }
+    document.documentElement.style.setProperty('--tenant-primary', color);
+}
 
 export function updateTheme(value: Appearance): void {
     if (typeof window === 'undefined') {
@@ -120,5 +128,6 @@ export function useAppearance(): UseAppearanceReturn {
         appearance,
         resolvedAppearance,
         updateAppearance,
+        updateBrandColor,
     };
 }

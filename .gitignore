@@ -33,3 +33,12 @@ yarn-error.log
 files/
 *.zip
 *.txt
+/storage/framework/lsp-*.php
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+!/storage/framework/cache/.gitignore
+!/storage/framework/sessions/.gitignore
+!/storage/framework/views/.gitignore
+database/*.sqlite*
+database/tenant*

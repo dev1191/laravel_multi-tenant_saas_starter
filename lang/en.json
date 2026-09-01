@@ -1,0 +1,14 @@
+{
+    "Welcome": "Welcome",
+    "Dashboard": "Dashboard",
+    "Settings": "Settings",
+    "Profile": "Profile",
+    "Log Out": "Log Out",
+    "Save Settings": "Save Settings",
+    "Site settings updated successfully.": "Site settings updated successfully.",
+    "New supported locale added.": "New supported locale added.",
+    "Select your currency": "Select your currency",
+    "Default Currency": "Default Currency",
+    "Default Timezone": "Default Timezone",
+    "Country": "Country"
+}

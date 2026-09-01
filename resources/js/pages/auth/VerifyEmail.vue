@@ -3,16 +3,9 @@ import { Form, Head } from '@inertiajs/vue3';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import AuthLayout from '@/layouts/AuthLayout.vue';
 import { logout } from '@/routes';
 import { send } from '@/routes/verification';
-
-defineOptions({
-    layout: {
-        title: 'Verify email',
-        description:
-            'Please verify your email address by clicking on the link we just emailed to you.',
-    },
-});
 
 defineProps<{
     status?: string;
@@ -20,28 +13,32 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Email verification" />
-
-    <div
-        v-if="status === 'verification-link-sent'"
-        class="mb-4 text-center text-sm font-medium text-green-600"
+    <AuthLayout
+        :title="$t('auth.verify_email') || 'Verify email'"
+        :description="$t('auth.verify_email_desc') || 'Please verify your email address by clicking on the link we just emailed to you.'"
     >
-        A new verification link has been sent to the email address you provided
-        during registration.
-    </div>
+        <Head :title="$t('auth.verify_email') || 'Email verification'" />
 
-    <Form
-        v-bind="send.form()"
-        class="space-y-6 text-center"
-        v-slot="{ processing }"
-    >
-        <Button :disabled="processing" variant="secondary">
-            <Spinner v-if="processing" />
-            Resend verification email
-        </Button>
+        <div
+            v-if="status === 'verification-link-sent'"
+            class="mb-4 text-center text-sm font-medium text-green-600"
+        >
+            {{ $t('auth.verification_sent') || 'A new verification link has been sent to the email address you provided during registration.' }}
+        </div>
 
-        <TextLink :href="logout()" as="button" class="mx-auto block text-sm">
-            Log out
-        </TextLink>
-    </Form>
+        <Form
+            v-bind="send.form()"
+            class="space-y-6 text-center"
+            v-slot="{ processing }"
+        >
+            <Button :disabled="processing" variant="secondary" class="w-full">
+                <Spinner v-if="processing" />
+                {{ $t('auth.resend_verification') || 'Resend verification email' }}
+            </Button>
+
+            <TextLink :href="logout()" as="button" class="mx-auto block text-sm">
+                {{ $t('auth.sign_out') }}
+            </TextLink>
+        </Form>
+    </AuthLayout>
 </template>

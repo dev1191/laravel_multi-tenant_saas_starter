@@ -19,8 +19,21 @@
             })();
         </script>
 
-        {{-- Inline style to set the HTML background color based on our theme in app.css --}}
+        @php
+            $tenantPrimaryColor = '#4f46e5';
+            try {
+                if (function_exists('tenant') && tenant()) {
+                    $tenantPrimaryColor = app(\App\Domain\Settings\Settings\SiteSettings::class)->primary_color ?? '#4f46e5';
+                }
+            } catch (\Throwable $e) {}
+        @endphp
+
+        {{-- Inline style to set the HTML background color and dynamic tenant primary brand color --}}
         <style>
+            :root {
+                --tenant-primary: {{ $tenantPrimaryColor }};
+            }
+
             html {
                 background-color: oklch(1 0 0);
             }
@@ -34,14 +47,10 @@
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-        @fonts
-
-        @vite(['resources/css/app.css', 'resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
-        <x-inertia::head>
-            <title>{{ config('app.name', 'Laravel') }}</title>
-        </x-inertia::head>
+        @vite(['resources/css/app.css', 'resources/js/app.ts'])
+        @inertiaHead
     </head>
     <body class="font-sans antialiased">
-        <x-inertia::app />
+        @inertia
     </body>
 </html>

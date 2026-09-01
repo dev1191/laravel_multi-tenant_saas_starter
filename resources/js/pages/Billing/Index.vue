@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, getCurrentInstance } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import {
@@ -64,20 +64,29 @@ const props = withDefaults(defineProps<Props>(), {
     plans: () => [],
 });
 
+const instance = getCurrentInstance();
+
+const t = (key: string, replacements: Record<string, string | number> = {}) => {
+    if (instance?.appContext.config.globalProperties.$t) {
+        return instance.appContext.config.globalProperties.$t(key, replacements);
+    }
+    return key;
+};
+
 const currentPlan = computed(() => props.plans.find((p) => p.is_current));
 const currentPlanAmount = computed(() => currentPlan.value?.price?.amount ?? 0);
 
 const getPlanActionLabel = (plan: Plan) => {
-    if (plan.is_current) return 'Current Plan';
-    if (!plan.price) return `Choose ${plan.name}`;
+    if (plan.is_current) return t('billing.current_plan');
+    if (!plan.price) return t('billing.choose', { plan: plan.name });
 
     const isHigher = plan.price.amount > currentPlanAmount.value;
 
     if (props.subscription && !props.subscription.on_grace_period && props.tenant.status === 'active') {
-        return isHigher ? `Upgrade to ${plan.name}` : `Downgrade to ${plan.name}`;
+        return isHigher ? t('billing.upgrade', { plan: plan.name }) : t('billing.downgrade', { plan: plan.name });
     }
 
-    return isHigher ? `Upgrade to ${plan.name}` : `Choose ${plan.name}`;
+    return isHigher ? t('billing.upgrade', { plan: plan.name }) : t('billing.choose', { plan: plan.name });
 };
 
 const openPortal = () => {
@@ -99,7 +108,8 @@ const selectPlan = (plan: Plan) => {
 };
 
 const cancelSubscription = () => {
-    if (confirm('Are you sure you want to cancel your subscription? You will retain access until the end of your billing period.')) {
+    const message = t('billing.cancel_confirm') || 'Are you sure you want to cancel your subscription? You will retain access until the end of your billing period.';
+    if (confirm(message)) {
         router.post('/billing/cancel');
     }
 };
@@ -115,14 +125,14 @@ const breadcrumbs = [
 </script>
 
 <template>
-    <Head title="Billing & Plans" />
+    <Head :title="$t('billing.title')" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex flex-1 flex-col gap-6 p-6">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight">Billing & Plans</h1>
+                <h1 class="text-2xl font-bold tracking-tight">{{ $t('billing.title') }}</h1>
                 <p class="text-sm text-muted-foreground">
-                    Manage your subscription, workspace tier, and payment methods.
+                    {{ $t('billing.subtitle') }}
                 </p>
             </div>
 
@@ -130,9 +140,9 @@ const breadcrumbs = [
             <div class="rounded-xl border border-sidebar-border/70 dark:border-sidebar-border bg-card p-6 shadow-sm">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Active Subscription</span>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{{ $t('billing.active_subscription') }}</span>
                         <div class="flex items-center gap-3 mt-1">
-                            <h2 class="text-xl font-bold capitalize">{{ tenant.plan }} Tier</h2>
+                            <h2 class="text-xl font-bold capitalize">{{ $t('billing.tier', { plan: tenant.plan }) }}</h2>
                             <span
                                 :class="{
                                     'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300': tenant.status === 'active',
@@ -145,10 +155,10 @@ const breadcrumbs = [
                             </span>
                         </div>
                         <p v-if="tenant.on_trial" class="text-xs text-muted-foreground mt-1">
-                            Your 14-day free trial ends on <strong class="text-gray-800 dark:text-gray-200">{{ tenant.trial_ends_at }}</strong>.
+                            {{ $t('billing.free_trial_banner', { ends_at: tenant.trial_ends_at }) }}
                         </p>
                         <p v-if="subscription?.on_grace_period" class="text-xs text-amber-600 dark:text-amber-400 mt-1">
-                            Your subscription has been canceled and will end on {{ subscription.ends_at }}.
+                            {{ $t('billing.grace_period_banner', { ends_at: subscription.ends_at }) }}
                         </p>
                     </div>
 
@@ -159,7 +169,7 @@ const breadcrumbs = [
                             class="inline-flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer"
                         >
                             <CreditCard class="w-4 h-4" />
-                            <span>Manage Payment & Invoices</span>
+                            <span>{{ $t('billing.manage_payment_and_invoices') }}</span>
                             <ExternalLink class="w-3.5 h-3.5 text-muted-foreground" />
                         </button>
 
@@ -168,7 +178,7 @@ const breadcrumbs = [
                             @click="resumeSubscription"
                             class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg shadow transition cursor-pointer"
                         >
-                            Resume Subscription
+                            {{ $t('billing.resume_subscription') }}
                         </button>
 
                         <button
@@ -176,7 +186,7 @@ const breadcrumbs = [
                             @click="cancelSubscription"
                             class="text-xs text-muted-foreground hover:text-red-500 cursor-pointer"
                         >
-                            Cancel Subscription
+                            {{ $t('billing.cancel_subscription') }}
                         </button>
                     </div>
                 </div>
@@ -184,7 +194,7 @@ const breadcrumbs = [
 
             <!-- Available Plans Grid -->
             <div>
-                <h3 class="text-lg font-semibold mb-4">Choose the Right Plan for Your Team</h3>
+                <h3 class="text-lg font-semibold mb-4">{{ $t('billing.choose_plan_desc') }}</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div
                         v-for="plan in plans"
@@ -202,7 +212,7 @@ const breadcrumbs = [
                                     v-if="plan.is_current"
                                     class="px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300"
                                 >
-                                    Current
+                                    {{ $t('billing.current_plan') }}
                                 </span>
                             </div>
                             <div class="mt-4 flex items-baseline">
@@ -213,7 +223,7 @@ const breadcrumbs = [
                             </div>
 
                             <div class="mt-6 pt-6 border-t space-y-3">
-                                <p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Features included</p>
+                                <p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{{ $t('billing.features_included') }}</p>
                                 <ul class="space-y-2 text-xs">
                                     <li class="flex items-center gap-2">
                                         <Check class="w-4 h-4 text-emerald-500 shrink-0" />
@@ -246,7 +256,7 @@ const breadcrumbs = [
                                 disabled
                                 class="w-full py-2.5 px-4 bg-gray-100 dark:bg-neutral-800 text-muted-foreground rounded-lg text-sm font-medium cursor-not-allowed"
                             >
-                                Current Plan
+                                {{ $t('billing.current_plan') }}
                             </button>
                         </div>
                     </div>

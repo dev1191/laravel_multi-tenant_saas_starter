@@ -104,7 +104,7 @@ class BillingController extends Controller
         $tenant = tenant();
         $this->billingGateway->cancelSubscription($tenant);
 
-        return back()->with('success', 'Your subscription has been canceled.');
+        return back()->with('success', __('messages.billing.canceled_success') ?: 'Your subscription has been canceled.');
     }
 
     public function resume(Request $request): RedirectResponse
@@ -112,6 +112,6 @@ class BillingController extends Controller
         $tenant = tenant();
         $this->billingGateway->resumeSubscription($tenant);
 
-        return back()->with('success', 'Your subscription has been resumed.');
+        return back()->with('success', __('messages.billing.resumed_success') ?: 'Your subscription has been resumed.');
     }
 }

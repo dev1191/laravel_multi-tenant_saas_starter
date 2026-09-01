@@ -82,22 +82,28 @@ app/Domain/
 ```
 This is the same internal shape a real module takes under `internachi/modular` — a module is just a domain folder that's been moved to `app-modules/{name}/` with its namespace updated, since it follows normal Laravel conventions rather than a different pattern.
 
-**b) Business logic lives in single-purpose Action classes, not fat controllers or shared service classes.**
-Each domain's `Actions/` folder holds one invokable class per business operation — e.g. `CreateTeamInvite`, `ProvisionTenantDatabase`, `AssignTenantRole`, `ChargeSubscription` — built with `lorisleiva/laravel-actions`, which lets a single class run as a controller action, a queued job, an event listener, or an Artisan command without duplicating logic:
+**b) Business logic is orchestrated via Domain Services & single-purpose Action classes.**
+Each domain encapsulates its business rules through a dedicated **Service** (e.g. `TeamService`, `BillingManager`, `TenantAdminService`) while maintaining invokable Action classes (via `lorisleiva/laravel-actions`) for discrete tasks across controllers, CLI, and queued jobs:
+- **`app/Domain/{Feature}/Services/{Feature}Service.php`**: Single source of truth for queries, permission checks, and domain orchestrations.
+- **Lean Controllers & Actions**: Handle HTTP routing and delegation directly to the domain service.
+
 ```php
-class CreateTeamInvite
+// app/Domain/Teams/Services/TeamService.php
+class TeamService
 {
-    use AsAction;
-
-    public function handle(Team $team, string $email, string $role): TeamInvite { ... }
-
-    public function asController(Request $request, Team $team)
-    {
-        return $this->handle($team, $request->email, $request->role);
-    }
+    public function getMembersWithRoles(Team $team): Collection { ... }
+    public function inviteOrAddMember(Team $team, User $inviter, string $email, string $role): array { ... }
+    public function removeMember(Team $team, User $actor, User $member): void { ... }
+    public function revokeInvite(Team $team, User $actor, TeamInvite $invite): void { ... }
 }
 ```
-This matters specifically for TenantForge because the same operation is triggered from multiple surfaces — a team invite can be created from the Vue/Inertia tenant app, from a Filament resource, or from an Artisan command during seeding — and an Action class is called identically from all three instead of being reimplemented per surface. It also makes the migration table below simpler: an Action doesn't care whether it's invoked from a monolith route or a module route, so nothing about its internals changes when the domain moves.
+
+**c) Asynchronous Background Export Engine with Polymorphic Morphs.**
+Filament Exporters (`TenantExporter`, `CentralUserExporter`) dispatch queue-backed chunked jobs (`ExportCsv`, `ExportXlsx`). Multi-guard support is enabled via `Export::polymorphicUserRelationship()` and `$table->nullableMorphs('user')`, allowing seamless exports for both `CentralUser` and tenant `User` without foreign key collisions.
+
+**d) Cross-Platform In-App Notification System.**
+- **Central Admin (Filament)**: Real-time database notifications polling (`databaseNotifications()`) sending automated alerts upon export completion and system updates.
+- **Tenant Application (Vue 3 + Inertia)**: Interactive notification bell header dropdown (`NotificationDropdown.vue`) and comprehensive Notification Center (`Notifications/Index.vue`) powered by Laravel database notifications.
 
 **c) Each domain has its own service provider, registered from one place.**
 Even though it's a monolith, `Billing`, `TenantAdmin`, `Invoicing`, and `Teams` each get their own `ServiceProvider` class that registers that domain's routes, migrations, and views — booted from a single array in `AppServiceProvider`, not scattered `Route::group()` calls in `web.php`. This is exactly how a real module registers itself later, so v2 just deletes the array entry and lets Composer's package discovery take over instead.

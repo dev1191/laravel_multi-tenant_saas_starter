@@ -15,9 +15,24 @@ class PlanResource extends Resource
 {
     protected static ?string $model = Plan::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-credit-card';
 
     protected static ?int $navigationSort = 2;
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'slug', 'stripe_product_id'];
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Slug' => $record->slug,
+            'Billing Period' => $record->billing_period,
+        ];
+    }
 
     public static function getModelLabel(): string
     {

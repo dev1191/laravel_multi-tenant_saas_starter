@@ -4,56 +4,33 @@ namespace App\Domain\Teams\Controllers;
 
 use App\Domain\Teams\Models\Team;
 use App\Domain\Teams\Models\TeamInvite;
+use App\Domain\Teams\Services\TeamService;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Pennant\Feature;
-use Spatie\Permission\Models\Role;
 
 class TeamController extends Controller
 {
+    public function __construct(
+        protected TeamService $teamService,
+    ) {
+    }
+
     public function index(Request $request): Response
     {
         $user = $request->user();
-        $team = $user->currentTeam() ?? Team::firstOrFail();
+        $selectedTeamId = $request->query('team_id');
+        $team = ($selectedTeamId ? $user->teams()->find($selectedTeamId) : null)
+            ?? $user->currentTeam()
+            ?? Team::firstOrFail();
 
         $canManage = $user->hasRoleLevel(80, $team);
-
-        $members = $team->members()->get()->map(function (User $member) use ($team) {
-            $role = $member->roles()->wherePivot('team_id', $team->id)->first();
-
-            return [
-                'id' => $member->id,
-                'name' => $member->name,
-                'email' => $member->email,
-                'role' => $role?->name ?? 'member',
-                'role_level' => $role?->level ?? 40,
-                'joined_at' => $member->pivot?->joined_at ? Carbon::parse($member->pivot->joined_at)->format('M j, Y') : null,
-                'is_owner' => $member->id === $team->owner_id,
-            ];
-        });
-
-        $invites = $team->invites()
-            ->where('status', 'pending')
-            ->where('expires_at', '>', now())
-            ->latest()
-            ->get()
-            ->map(function (TeamInvite $invite) {
-                return [
-                    'id' => $invite->id,
-                    'email' => $invite->email,
-                    'role' => $invite->role,
-                    'invited_by' => $invite->inviter?->name ?? 'Admin',
-                    'expires_at' => $invite->expires_at->format('M j, Y'),
-                    'invite_url' => url('/invite/'.$invite->token),
-                ];
-            });
-
-        $availableRoles = Role::orderBy('level', 'desc')->get(['id', 'name', 'level']);
+        $userTeams = $user->teams()->withCount('members')->get(['teams.id', 'teams.name', 'teams.slug']);
 
         return Inertia::render('Teams/Index', [
             'team' => [
@@ -62,9 +39,10 @@ class TeamController extends Controller
                 'slug' => $team->slug,
                 'owner_id' => $team->owner_id,
             ],
-            'members' => $members,
-            'invites' => $invites,
-            'available_roles' => $availableRoles,
+            'user_teams' => $userTeams,
+            'members' => $this->teamService->getMembersWithRoles($team),
+            'invites' => $this->teamService->getPendingInvites($team),
+            'available_roles' => $this->teamService->getAvailableRoles(),
             'can_manage' => $canManage,
         ]);
     }
@@ -75,45 +53,25 @@ class TeamController extends Controller
         $team = $user->currentTeam() ?? Team::firstOrFail();
 
         if (! $user->hasRoleLevel(80, $team)) {
-            abort(403, 'Only Admins or Workspace Owners can invite team members.');
+            abort(403, __('messages.teams.only_admins_can_invite') ?: 'Only Admins or Workspace Owners can invite team members.');
         }
 
         if (Feature::active('team-invites') === false) {
-            abort(403, 'Team invites are not supported on your current subscription plan.');
+            abort(403, __('messages.teams.invites_not_supported_on_plan') ?: 'Team invites are not supported on your current subscription plan.');
         }
 
         $validated = $request->validate([
             'email' => ['required', 'email'],
-            'role' => ['required', 'string', 'in:admin,manager,member,viewer'],
+            'role' => ['required', 'string', Rule::in($this->teamService->getAllowedRoleNames())],
         ]);
 
-        $existingMember = $team->members()->where('email', $validated['email'])->first();
-        if ($existingMember) {
-            return back()->withErrors(['email' => 'This user is already a member of the workspace team.']);
+        $result = $this->teamService->inviteOrAddMember($team, $user, $validated['email'], $validated['role']);
+
+        if ($result['status'] === 'error') {
+            return back()->withErrors(['email' => $result['message']]);
         }
 
-        $existingUser = User::where('email', $validated['email'])->first();
-
-        if ($existingUser) {
-            $team->members()->syncWithoutDetaching([
-                $existingUser->id => ['joined_at' => now()],
-            ]);
-            $existingUser->assignRole($validated['role'], $team);
-
-            return back()->with('success', "{$existingUser->name} has been added to the team.");
-        }
-
-        $invite = TeamInvite::create([
-            'team_id' => $team->id,
-            'email' => $validated['email'],
-            'role' => $validated['role'],
-            'token' => TeamInvite::generateToken(),
-            'invited_by' => $user->id,
-            'status' => 'pending',
-            'expires_at' => now()->addDays(7),
-        ]);
-
-        return back()->with('success', 'Invitation link generated and ready to share.');
+        return back()->with('success', $result['message']);
     }
 
     public function removeMember(Request $request, User $member): RedirectResponse
@@ -121,16 +79,16 @@ class TeamController extends Controller
         $user = $request->user();
         $team = $user->currentTeam() ?? Team::firstOrFail();
 
-        if (! $user->hasRoleLevel(80, $team)) {
-            abort(403, 'Unauthorized.');
-        }
+        $this->teamService->removeMember($team, $user, $member);
 
-        if ($member->id === $team->owner_id) {
-            abort(403, 'The workspace owner cannot be removed.');
-        }
+        return back()->with('success', __('messages.teams.removed_success', ['name' => $member->name]) ?: "{$member->name} removed from the team.");
+    }
 
-        $team->members()->detach($member->id);
+    public function removeInvite(Request $request, TeamInvite $invite): RedirectResponse
+    {
+        $user = $request->user();
+        $this->teamService->revokeInvite($invite->team, $user, $invite);
 
-        return back()->with('success', "{$member->name} removed from the team.");
+        return back()->with('success', __('messages.teams.revoked_success') ?: 'Invitation has been revoked.');
     }
 }

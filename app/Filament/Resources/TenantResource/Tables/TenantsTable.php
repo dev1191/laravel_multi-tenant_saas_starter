@@ -3,17 +3,25 @@
 namespace App\Filament\Resources\TenantResource\Tables;
 
 use App\Domain\TenantAdmin\Models\ImpersonationLog;
+use App\Enums\TenantStatus;
+use App\Filament\Exports\TenantExporter;
 use App\Models\Tenant;
+use Coolsam\Flatpickr\Forms\Components\Flatpickr;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ExportBulkAction;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class TenantsTable
@@ -26,7 +34,7 @@ class TenantsTable
                     ->label('Logo')
                     ->disk('public')
                     ->circular()
-                    ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->name) . '&color=FFFFFF&background=4F46E5')
+                    ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name='.urlencode($record->name).'&color=FFFFFF&background=4F46E5')
                     ->toggleable(),
                 TextColumn::make('id')
                     ->label(__('messages.tenant.subdomain'))
@@ -67,7 +75,7 @@ class TenantsTable
             ->filters([
                 SelectFilter::make('status')
                     ->label(__('messages.common.status'))
-                    ->options(\App\Enums\TenantStatus::class),
+                    ->options(TenantStatus::class),
                 SelectFilter::make('plan')
                     ->label(__('messages.billing.current_plan'))
                     ->options([
@@ -76,7 +84,46 @@ class TenantsTable
                         'pro' => 'Pro',
                         'business' => 'Business',
                     ]),
-            ])
+                Filter::make('created_at')
+                    ->label(__('messages.common.created_at'))
+                    ->columnSpan(['default' => 1, 'sm' => 2, 'lg' => 2])
+                    ->columns(2)
+                    ->form([
+                        Flatpickr::make('created_from')
+                            ->label(__('messages.common.created_from'))
+                            ->dateFormat('Y-m-d')
+                            ->displayFormat('M j, Y')
+                            ->prefixIcon('heroicon-m-calendar-days'),
+                        Flatpickr::make('created_until')
+                            ->label(__('messages.common.created_until'))
+                            ->dateFormat('Y-m-d')
+                            ->displayFormat('M j, Y')
+                            ->prefixIcon('heroicon-m-calendar-days'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['created_from'] ?? null) {
+                            $indicators['created_from'] = 'Created from '.\Carbon\Carbon::parse($data['created_from'])->toFormattedDateString();
+                        }
+                        if ($data['created_until'] ?? null) {
+                            $indicators['created_until'] = 'Created until '.\Carbon\Carbon::parse($data['created_until'])->toFormattedDateString();
+                        }
+
+                        return $indicators;
+                    }),
+            ], layout: FiltersLayout::AboveContent)
+            ->filtersFormColumns(4)
             ->actions([
                 Action::make('impersonate')
                     ->label(__('messages.tenant.impersonate'))
@@ -154,7 +201,7 @@ class TenantsTable
                         ->color(fn (Tenant $record) => $record->isSuspended() ? 'success' : 'danger')
                         ->requiresConfirmation()
                         ->action(function (Tenant $record) {
-                            $newStatus = $record->isSuspended() ? \App\Enums\TenantStatus::Active : \App\Enums\TenantStatus::Suspended;
+                            $newStatus = $record->isSuspended() ? TenantStatus::Active : TenantStatus::Suspended;
                             $record->update(['status' => $newStatus]);
 
                             Notification::make()
@@ -166,6 +213,16 @@ class TenantsTable
                     EditAction::make(),
                     DeleteAction::make(),
                 ]),
+            ])
+            ->headerActions([
+                ExportAction::make()
+                    ->exporter(TenantExporter::class)
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->label(__('messages.tenant.export_workspaces')),
+            ])
+            ->bulkActions([
+                ExportBulkAction::make()
+                    ->exporter(TenantExporter::class),
             ]);
     }
 }

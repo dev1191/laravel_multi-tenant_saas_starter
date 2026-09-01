@@ -14,9 +14,25 @@ class TenantResource extends Resource
 {
     protected static ?string $model = Tenant::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-building-office-2';
 
     protected static ?int $navigationSort = 1;
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'id', 'email'];
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'ID' => $record->id,
+            'Email' => $record->email,
+            'Plan' => $record->plan ?? 'No Plan',
+        ];
+    }
 
     public static function getModelLabel(): string
     {

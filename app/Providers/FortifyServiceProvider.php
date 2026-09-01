@@ -40,6 +40,28 @@ class FortifyServiceProvider extends ServiceProvider
     {
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::createUsersUsing(CreateNewUser::class);
+
+        Fortify::authenticateUsing(function (Request $request) {
+            $user = \App\Models\User::where('email', $request->input(Fortify::username()))->first();
+
+            if ($user && \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+                if ($user->isSuspended()) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        Fortify::username() => __('Your account has been suspended. Please contact your workspace administrator.'),
+                    ]);
+                }
+
+                if ($user->isInactive()) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        Fortify::username() => __('Your account is inactive. Please contact your administrator.'),
+                    ]);
+                }
+
+                return $user;
+            }
+
+            return null;
+        });
     }
 
     /**

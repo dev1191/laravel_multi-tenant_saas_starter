@@ -91,6 +91,30 @@ class HandleInertiaRequests extends Middleware
             $highestRoleLevel = $user->highestRoleLevel($currentTeam);
         }
 
+        $unreadNotificationsCount = 0;
+        $recentNotifications = [];
+        if ($user) {
+            try {
+                $unreadNotificationsCount = $user->unreadNotifications()->count();
+                $recentNotifications = $user->notifications()
+                    ->latest()
+                    ->take(5)
+                    ->get()
+                    ->map(fn ($n) => [
+                        'id' => $n->id,
+                        'type' => $n->data['type'] ?? 'info',
+                        'title' => $n->data['title'] ?? 'Notification',
+                        'message' => $n->data['message'] ?? '',
+                        'action_url' => $n->data['action_url'] ?? null,
+                        'action_text' => $n->data['action_text'] ?? null,
+                        'read_at' => $n->read_at ? $n->read_at->toISOString() : null,
+                        'created_at' => $n->created_at->diffForHumans(),
+                    ]);
+            } catch (\Throwable) {
+                // Ignore if table not yet migrated
+            }
+        }
+
         return [
             ...parent::share($request),
             'name' => $siteSettingsData['site_name'] ?? config('app.name'),
@@ -114,6 +138,8 @@ class HandleInertiaRequests extends Middleware
                     'slug' => $currentTeam->slug,
                     'is_owner' => $currentTeam->owner_id === $user?->id,
                 ] : null,
+                'unread_notifications_count' => $unreadNotificationsCount,
+                'notifications' => $recentNotifications,
             ],
             'tenant' => $tenantData,
             'site_settings' => $siteSettingsData,

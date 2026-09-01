@@ -29,7 +29,14 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->passwordReset()
+            ->profile()
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s')
+            ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
+            ->globalSearchDebounce('400ms')
             ->authGuard('central')
+            ->authPasswordBroker('central_users')
             ->brandName(function () {
                 try {
                     return app(PlatformBrandingSettings::class)->brand_name ?: 'TenantForge Central';

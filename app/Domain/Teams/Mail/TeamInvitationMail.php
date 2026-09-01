@@ -39,7 +39,7 @@ class TeamInvitationMail extends Mailable implements ShouldQueue
         return new Content(
             view: 'emails.team_invitation',
             with: [
-                'inviteUrl' => route('teams.invites.accept', ['token' => $this->invite->token]),
+                'inviteUrl' => route('team.invites.accept_view', ['token' => $this->invite->token]),
                 'teamName' => $settings?->site_name ?? $this->invite->team->name,
                 'inviterName' => $this->invite->inviter?->name ?? 'A team admin',
                 'role' => ucfirst($this->invite->role),

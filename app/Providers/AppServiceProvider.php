@@ -41,6 +41,11 @@ class AppServiceProvider extends ServiceProvider
 
         Cashier::useCustomerModel(Tenant::class);
         Cashier::calculateTaxes();
+
+        \Illuminate\Support\Facades\Event::subscribe(\App\Listeners\AuthEventSubscriber::class);
+
+        \Filament\Actions\Exports\Models\Export::polymorphicUserRelationship();
+        \Filament\Actions\Imports\Models\Import::polymorphicUserRelationship();
     }
 
     /**

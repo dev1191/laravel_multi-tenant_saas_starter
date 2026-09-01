@@ -21,17 +21,19 @@
 - **Staff Impersonation**: Built-in impersonation with audit trails connecting central logs to tenant actions.
 
 ### 🎛️ Central Admin Panel (FilamentPHP)
+- **Workspace & Staff Exporters**: Asynchronous chunked background exports (CSV/XLSX) with in-app download notifications and polymorphic multi-guard support.
+- **Global Search & Filter**: Instant `cmd+k` / `ctrl+k` global lookup across tenants, staff, and plans + inline Flatpickr 2-column date range filters.
 - **Workspace Management**: Provision, suspend, activate, and manage tenant subscriptions and trial periods.
-- **Platform Branding**: Upload light/dark logos, favicons, and accent colors.
-- **Platform Mail Settings**: Configure SMTP/SES/Postmark credentials with interactive test-send probes.
-- **Storage Management**: Configure S3 or S3-compatible providers (DigitalOcean Spaces, Cloudflare R2, MinIO, Backblaze B2) with live write/delete connection probes.
-- **Email Templates**: Dynamic responsive email templates with live mobile/desktop previews and test sending.
-- **Multi-Currency Pricing**: Manage plans, feature flags (Pennant), and multi-currency pricing tiers.
+- **Staff Security**: Self-deletion guards and isolated `central_users` password reset broker.
+- **Platform Branding & Mail Settings**: Upload light/dark logos, test SMTP/SES credentials, and configure S3/R2 storage with live connection probes.
+- **Multi-Gateway Payment Settings**: Dynamic credentials for 6 global gateways (Stripe, Paddle, Paystack, Razorpay, MercadoPago, PayPal) with currency auto-routing.
 
 ### 💻 Tenant Application Layer (Vue 3 + Inertia)
-- **Modern UI**: Clean, responsive, dark/light theme interface built with Tailwind CSS.
+- **Service Pattern & Clean Architecture**: Domain operations encapsulated in dedicated services (`TeamService`, etc.) with lean controllers.
+- **Production-Grade Team Management**: Multi-team switcher (scaled for 100+ teams), executive KPI counters, live search, role filter, column sorting, and client-side pagination.
+- **Reusable shadcn-vue Primitives**: Built on `reka-ui` and Tailwind CSS v4, including reusable `Table` and `RoleSelect` components.
+- **In-App Notification Center**: Real-time notification bell dropdown and full management page powered by database notifications.
 - **Teams & Authorization**: Multi-level hierarchical roles (`owner`, `admin`, `manager`, `member`, `viewer`) via `spatie/laravel-permission` in teams mode.
-- **Workspace Settings**: Custom tenant branding, timezone, currency, and locale customization.
 - **Internationalization (i18n)**: Out-of-the-box multi-language support (English, Spanish, French, German, Portuguese, Arabic RTL, Japanese, Chinese, Nepali).
 
 ---

@@ -16,4 +16,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/team', [TeamController::class, 'index'])->name('team.index');
     Route::post('/team/invite', CreateTeamInvite::class)->name('team.invite');
     Route::delete('/team/members/{member}', RemoveTeamMember::class)->name('team.members.remove');
+    Route::delete('/team/invites/{invite}', [TeamController::class, 'removeInvite'])->name('team.invites.remove');
 });

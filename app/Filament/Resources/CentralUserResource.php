@@ -14,7 +14,22 @@ class CentralUserResource extends Resource
 {
     protected static ?string $model = CentralUser::class;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-users';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'email'];
+    }
+
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Email' => $record->email,
+            'Role' => $record->role instanceof \App\Enums\CentralUserRole ? $record->role->getLabel() : (string) $record->role,
+        ];
+    }
 
     public static function getNavigationGroup(): ?string
     {

@@ -28,6 +28,14 @@ Route::middleware([
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
+    // In-App Notifications
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::get('/notifications', [\App\Http\Controllers\Tenant\NotificationController::class, 'index'])->name('notifications.index');
+        Route::post('/notifications/{id}/read', [\App\Http\Controllers\Tenant\NotificationController::class, 'markAsRead'])->name('notifications.read');
+        Route::post('/notifications/read-all', [\App\Http\Controllers\Tenant\NotificationController::class, 'markAllAsRead'])->name('notifications.read_all');
+        Route::delete('/notifications/{id}', [\App\Http\Controllers\Tenant\NotificationController::class, 'destroy'])->name('notifications.destroy');
+    });
+
     // Modular Domain Tenant Routes
     require base_path('app/Domain/TenantAdmin/routes/tenant.php');
     require base_path('app/Domain/Teams/routes/tenant.php');

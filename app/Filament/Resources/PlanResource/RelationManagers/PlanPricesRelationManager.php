@@ -34,16 +34,9 @@ class PlanPricesRelationManager extends RelationManager
                 ->required()
                 ->helperText('2900 = $29.00, 9900 = $99.00'),
 
-            Select::make('gateway')
-                ->options([
-                    'stripe' => 'Stripe',
-                    'paddle' => 'Paddle',
-                    'paystack' => 'Paystack',
-                    'razorpay' => 'Razorpay',
-                    'mercadopago' => 'MercadoPago',
-                    'paypal' => 'PayPal',
-                ])
-                ->default('stripe')
+            \Filament\Forms\Components\Select::make('gateway')
+                ->options(\App\Enums\PaymentGateway::options())
+                ->default(\App\Enums\PaymentGateway::Stripe->value)
                 ->required(),
 
             TextInput::make('gateway_price_id')
@@ -64,14 +57,9 @@ class PlanPricesRelationManager extends RelationManager
                     ->sortable(),
                 TextColumn::make('gateway')
                     ->badge()
-                    ->colors([
-                        'primary' => 'stripe',
-                        'info' => 'paddle',
-                        'success' => 'paystack',
-                        'warning' => 'razorpay',
-                        'danger' => 'mercadopago',
-                        'secondary' => 'paypal',
-                    ]),
+                    ->formatStateUsing(fn ($state) => \App\Enums\PaymentGateway::tryFrom($state)?->getLabel() ?? ucfirst((string) $state))
+                    ->color(fn ($state) => \App\Enums\PaymentGateway::tryFrom($state)?->getColor() ?? 'gray')
+                    ->icon(fn ($state) => \App\Enums\PaymentGateway::tryFrom($state)?->getIcon()),
                 TextColumn::make('gateway_price_id')
                     ->label('Gateway ID')
                     ->copyable(),

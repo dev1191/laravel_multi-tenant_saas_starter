@@ -84,14 +84,7 @@ class ManagePaymentGateways extends Page
                                             Grid::make(2)->schema([
                                                 Select::make('default_gateway')
                                                     ->label(__('messages.payment_gateways.default_gateway'))
-                                                    ->options([
-                                                        'stripe' => 'Stripe (Global - USD, EUR, GBP, CAD, AUD)',
-                                                        'paddle' => 'Paddle (Global Merchant of Record - 200+ Countries)',
-                                                        'paystack' => 'Paystack (Africa - NGN, GHS, KES, ZAR)',
-                                                        'razorpay' => 'Razorpay (India & South Asia - INR)',
-                                                        'mercadopago' => 'Mercado Pago (Latin America - BRL, MXN, ARS, CLP, COP)',
-                                                        'paypal' => 'PayPal (Worldwide)',
-                                                    ])
+                                                    ->options(\App\Enums\PaymentGateway::fullOptions())
                                                     ->helperText('Primary default gateway used when no currency-specific gateway is matched.')
                                                     ->required(),
 

@@ -1,11 +1,11 @@
 # TenantForge — Laravel Multi-Tenant SaaS Starter Kit
 
-[![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20.svg?style=flat&logo=laravel)](https://laravel.com)
-[![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4.svg?style=flat&logo=php)](https://php.net)
-[![Stancl Tenancy](https://img.shields.io/badge/Stancl%20Tenancy-v4-38B2AC.svg?style=flat)](https://tenancyforlaravel.com)
-[![Filament](https://img.shields.io/badge/FilamentPHP-v4-F59E0B.svg?style=flat&logo=filament)](https://filamentphp.com)
+[![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20.svg?style=flat&logo=laravel)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4.svg?style=flat&logo=php)](https://php.net)
+[![Stancl Tenancy](https://img.shields.io/badge/Stancl%20Tenancy-v3.10%2B-38B2AC.svg?style=flat)](https://tenancyforlaravel.com)
+[![Filament](https://img.shields.io/badge/FilamentPHP-v5.x-F59E0B.svg?style=flat&logo=filament)](https://filamentphp.com)
 [![Vue 3](https://img.shields.io/badge/Vue.js-3.x-4FC08D.svg?style=flat&logo=vuedotjs)](https://vuejs.org)
-[![Inertia.js](https://img.shields.io/badge/Inertia.js-2.x-9553E9.svg?style=flat&logo=inertia)](https://inertiajs.com)
+[![Inertia.js](https://img.shields.io/badge/Inertia.js-3.x-9553E9.svg?style=flat&logo=inertia)](https://inertiajs.com)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **TenantForge** is a production-ready, batteries-included Laravel multi-tenant SaaS starter kit designed to give developers and teams a robust foundation for building and scaling B2B SaaS applications with database-per-tenant isolation.
@@ -15,7 +15,7 @@
 ## ✨ Features & Architecture
 
 ### 🏢 Multi-Tenancy & Isolation
-- **Database-per-tenant isolation**: Powered by `stancl/tenancy` (v4), dynamically switching tenant databases and caching layers.
+- **Database-per-tenant isolation**: Powered by `stancl/tenancy` (v3.10+), dynamically switching tenant databases and caching layers.
 - **Subdomain Routing**: Clean identification (e.g. `acme.tenantforge.test`), supporting multiple domains and automatic context provisioning.
 - **Asynchronous Tenant Provisioning**: Tenant setup and seeding runs smoothly via background queued jobs.
 - **Staff Impersonation**: Built-in impersonation with audit trails connecting central logs to tenant actions.
@@ -41,7 +41,7 @@
 ## 🚀 Getting Started
 
 ### 1. Prerequisites
-- **PHP**: 8.2 or higher
+- **PHP**: 8.3 or higher
 - **Composer**: 2.x
 - **Node.js & NPM**: Node 18+
 - **Database**: SQLite (default), MySQL 8+, MariaDB, or PostgreSQL

@@ -26,14 +26,14 @@ Developers and small teams who want to launch a SaaS product quickly without bui
 
 | Layer | Technology | Purpose |
 |---|---|---|
-| Backend framework | Laravel (12.x) | Core application framework |
+| Backend framework | Laravel (13.x) | Core application framework |
 | Business logic | `lorisleiva/laravel-actions` | Single-purpose Action classes usable as controllers, jobs, listeners, or commands |
-| Multi-tenancy | `stancl/tenancy` (v4) | Tenant identification, DB switching, tenant lifecycle |
-| Central admin panel | FilamentPHP | Tenant management, billing oversight, impersonation |
-| Tenant-facing app | Vue 3 + Inertia.js | The actual product experience for tenant end-users |
+| Multi-tenancy | `stancl/tenancy` (v3.10+) | Tenant identification, DB switching, tenant lifecycle |
+| Central admin panel | FilamentPHP (v5.x) | Tenant management, billing oversight, impersonation |
+| Tenant-facing app | Vue 3 + Inertia.js (v3.x) | The actual product experience for tenant end-users |
 | Authorization | `spatie/laravel-permission` (teams mode) | Multi-level role hierarchy, scoped per team per tenant |
 | Site settings | `spatie/laravel-settings` | Typed, tenant-scoped site settings (branding, locale, currency) |
-| Billing | Laravel Cashier (Stripe, v1) + gateway interface + Stripe Tax | Subscription billing, automatic VAT/GST calculation; extensible to regional gateways |
+| Billing | Laravel Cashier (Stripe, v16.x) + gateway interface + Stripe Tax | Subscription billing, automatic VAT/GST calculation; extensible to regional gateways |
 | Feature flagging | Laravel Pennant | Gate features by subscription plan tier |
 | Cache / Queues | Redis | Tenant-aware cache prefixing, queue isolation |
 | Database | MySQL/PostgreSQL, `utf8mb4` encoding | One central DB + one DB per tenant |

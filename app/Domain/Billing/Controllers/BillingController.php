@@ -69,7 +69,7 @@ class BillingController extends Controller
     public function checkout(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'plan_price_id' => ['required', 'exists:plan_prices,id'],
+            'plan_price_id' => ['required', \Illuminate\Validation\Rule::exists(PlanPrice::class, 'id')],
         ]);
 
         $planPrice = PlanPrice::with('plan')->findOrFail($validated['plan_price_id']);

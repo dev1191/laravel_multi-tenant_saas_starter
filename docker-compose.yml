@@ -20,10 +20,8 @@ services:
       CENTRAL_DOMAIN: localhost
       DB_CONNECTION: sqlite
       DB_DATABASE: /var/www/html/database/database.sqlite
-      QUEUE_CONNECTION: redis
-      CACHE_STORE: redis
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      QUEUE_CONNECTION: database
+      CACHE_STORE: database
       MAIL_MAILER: smtp
       MAIL_HOST: mailpit
       MAIL_PORT: 1025
@@ -34,7 +32,6 @@ services:
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
-      - redis
       - mailpit
 
   queue:
@@ -48,10 +45,8 @@ services:
       APP_DEBUG: "true"
       DB_CONNECTION: sqlite
       DB_DATABASE: /var/www/html/database/database.sqlite
-      QUEUE_CONNECTION: redis
-      CACHE_STORE: redis
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      QUEUE_CONNECTION: database
+      CACHE_STORE: database
       MAIL_MAILER: smtp
       MAIL_HOST: mailpit
       MAIL_PORT: 1025
@@ -60,30 +55,6 @@ services:
       - database_data:/var/www/html/database
     depends_on:
       - app
-      - redis
-
-  redis:
-    image: redis:7-alpine
-    container_name: tenantforge-redis
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-
-  mysql:
-    image: mysql:8.0
-    container_name: tenantforge-mysql
-    restart: unless-stopped
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_DATABASE: tenantforge
-      MYSQL_USER: tenantforge
-      MYSQL_PASSWORD: secretpassword
-      MYSQL_ROOT_PASSWORD: rootpassword
-    volumes:
-      - mysql_data:/var/lib/mysql
 
   mailpit:
     image: axllent/mailpit:latest
@@ -96,7 +67,5 @@ services:
 volumes:
   storage_data:
   database_data:
-  redis_data:
-  mysql_data:
   caddy_data:
   caddy_config:

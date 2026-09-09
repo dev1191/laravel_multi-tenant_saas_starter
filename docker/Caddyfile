@@ -3,7 +3,7 @@
 	frankenphp
 }
 
-{$SERVER_NAME:http://:80} {
+{$SERVER_NAME::{$PORT:80}} {
 	root * /var/www/html/public
 	encode zstd br gzip
 

@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: tenantforge
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: APP_NAME
+        value: TenantForge
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_URL
+        sync: false # e.g. https://tenantforge.onrender.com
+      - key: CENTRAL_DOMAIN
+        sync: false # e.g. tenantforge.onrender.com
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_DATABASE
+        value: /var/www/html/database/database.sqlite
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: CACHE_STORE
+        value: database
+      - key: SESSION_DRIVER
+        value: cookie
+      - key: MAIL_MAILER
+        value: log
+      - key: RUN_MIGRATIONS
+        value: "true"
+      - key: CADDY_GLOBAL_OPTIONS
+        value: "auto_https off"

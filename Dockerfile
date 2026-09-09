@@ -1,26 +1,5 @@
 # ==============================================================================
-# Stage 1: Build Frontend Assets (Vite + Vue 3 + Tailwind CSS)
-# ==============================================================================
-FROM node:22-alpine AS frontend
-
-WORKDIR /app
-
-# Copy dependency manifests
-COPY package.json package-lock.json ./
-
-# Install npm dependencies
-RUN npm ci
-
-# Copy project source files required for asset compilation
-COPY resources ./resources
-COPY public ./public
-COPY vite.config.ts tsconfig.json components.json ./
-
-# Compile production bundles
-RUN npm run build
-
-# ==============================================================================
-# Stage 2: Application Runtime (FrankenPHP + PHP 8.3 Alpine)
+# Application Runtime (FrankenPHP + PHP 8.3 Alpine)
 # ==============================================================================
 FROM dunglas/frankenphp:1-php8.3-alpine AS runtime
 
@@ -62,11 +41,8 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction
 
-# Copy full application source code
+# Copy application source code (including pre-built public/build assets)
 COPY . .
-
-# Copy compiled frontend assets from frontend build stage
-COPY --from=frontend /app/public/build ./public/build
 
 # Complete composer autoload generation
 RUN composer dump-autoload --optimize --no-dev --no-interaction

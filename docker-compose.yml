@@ -22,17 +22,13 @@ services:
       DB_DATABASE: /var/www/html/database/database.sqlite
       QUEUE_CONNECTION: database
       CACHE_STORE: database
-      MAIL_MAILER: smtp
-      MAIL_HOST: mailpit
-      MAIL_PORT: 1025
+      MAIL_MAILER: log
       RUN_MIGRATIONS: "true"
     volumes:
       - storage_data:/var/www/html/storage
       - database_data:/var/www/html/database
       - caddy_data:/data
       - caddy_config:/config
-    depends_on:
-      - mailpit
 
   queue:
     image: tenantforge-app:latest
@@ -47,22 +43,12 @@ services:
       DB_DATABASE: /var/www/html/database/database.sqlite
       QUEUE_CONNECTION: database
       CACHE_STORE: database
-      MAIL_MAILER: smtp
-      MAIL_HOST: mailpit
-      MAIL_PORT: 1025
+      MAIL_MAILER: log
     volumes:
       - storage_data:/var/www/html/storage
       - database_data:/var/www/html/database
     depends_on:
       - app
-
-  mailpit:
-    image: axllent/mailpit:latest
-    container_name: tenantforge-mailpit
-    restart: unless-stopped
-    ports:
-      - "1025:1025" # SMTP
-      - "8025:8025" # Web UI
 
 volumes:
   storage_data:

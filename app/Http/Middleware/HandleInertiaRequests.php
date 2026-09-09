@@ -118,6 +118,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => $siteSettingsData['site_name'] ?? config('app.name'),
+            'central_domain' => config('tenancy.central_domains.0') ?? $request->getHost(),
             'auth' => [
                 'user' => $user ? [
                     'id' => $user->id,

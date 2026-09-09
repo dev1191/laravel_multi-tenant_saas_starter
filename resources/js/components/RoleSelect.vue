@@ -32,6 +32,7 @@ const roleOptions = computed<RoleOption[]>(() => {
     }
 
     const pageRoles = page.props.available_roles as RoleOption[] | undefined;
+
     if (pageRoles && pageRoles.length > 0) {
         return pageRoles;
     }
@@ -41,9 +42,11 @@ const roleOptions = computed<RoleOption[]>(() => {
 
 const formatRoleLabel = (role: RoleOption): string => {
     const capitalized = role.name.charAt(0).toUpperCase() + role.name.slice(1);
+
     if (props.showLevel !== false && role.level !== undefined) {
         return `${capitalized} (Level ${role.level})`;
     }
+
     return capitalized;
 };
 </script>

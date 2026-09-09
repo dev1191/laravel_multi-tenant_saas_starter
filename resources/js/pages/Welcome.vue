@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
 import {
     ArrowRight,
     Boxes,
@@ -17,9 +16,11 @@ import {
     Shield,
     ShieldAlert,
     Sparkles,
+    Terminal,
     Users,
     Zap,
 } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 interface PlanPrice {
     currency: string;
@@ -56,61 +57,104 @@ const availableCurrencies = ['USD', 'EUR', 'GBP', 'BRL', 'INR'];
 
 const getPrice = (plan: Plan) => {
     const p = plan.prices.find((x) => x.currency === selectedCurrency.value);
+
     return p ? p.formatted : plan.price_formatted;
 };
 </script>
 
 <template>
-    <Head title="TenantForge — Multi-Tenant Laravel SaaS Starter Kit" />
+    <Head title="TenantForge — Multi-Tenant Laravel SaaS Starter Kit">
+        <meta
+            name="description"
+            content="Production-ready multi-tenant SaaS starter kit for Laravel and Vue 3 featuring database-per-tenant isolation, central administration, and multi-currency billing."
+        />
+    </Head>
 
-    <div class="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white font-sans antialiased overflow-x-hidden">
-        <!-- Background Glow Orbs -->
-        <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
-            <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl"></div>
-            <div class="absolute top-1/3 -right-40 w-96 h-96 bg-purple-600/15 rounded-full blur-3xl"></div>
-            <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl"></div>
-        </div>
+    <div
+        class="min-h-dvh bg-slate-950 font-sans text-slate-100 antialiased selection:bg-indigo-600 selection:text-white"
+    >
+        <!-- Subtle Top Grid Pattern (Engineered, No AI Glow Orbs) -->
+        <div
+            class="pointer-events-none absolute inset-x-0 top-0 h-96 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] bg-[size:4rem_4rem]"
+            aria-hidden="true"
+        />
 
         <!-- Navigation Header -->
-        <header class="relative z-20 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md sticky top-0">
-            <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <header
+            class="sticky top-0 z-30 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md"
+        >
+            <div
+                class="mx-auto flex h-16 max-w-7xl items-center justify-between px-6"
+            >
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                        <Boxes class="w-5 h-5 text-white" />
+                    <div
+                        class="flex size-9 items-center justify-center rounded-xl border border-slate-800 bg-slate-900 text-indigo-400"
+                    >
+                        <Boxes class="size-5" />
                     </div>
-                    <span class="text-lg font-bold tracking-tight text-white">TenantForge</span>
-                    <span class="hidden sm:inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                        v1.0 Ready
+                    <span class="text-base font-semibold text-white"
+                        >TenantForge</span
+                    >
+                    <span
+                        class="inline-flex items-center gap-1.5 rounded-full border border-slate-800 bg-slate-900 px-2.5 py-0.5 text-xs font-medium text-slate-300"
+                    >
+                        <span
+                            class="size-1.5 animate-pulse rounded-full bg-emerald-500"
+                            aria-hidden="true"
+                        />
+                        v1.0 Production
                     </span>
                 </div>
 
-                <nav class="flex items-center gap-4">
+                <nav
+                    class="flex items-center gap-6"
+                    aria-label="Main Navigation"
+                >
                     <a
                         href="#features"
-                        class="text-sm font-medium text-slate-300 hover:text-white transition hidden md:block"
+                        class="hidden rounded text-sm text-slate-400 transition hover:text-white focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none md:block"
                     >
-                        Features
+                        Capabilities
                     </a>
                     <a
                         href="#architecture"
-                        class="text-sm font-medium text-slate-300 hover:text-white transition hidden md:block"
+                        class="hidden rounded text-sm text-slate-400 transition hover:text-white focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none md:block"
                     >
                         Architecture
                     </a>
                     <a
                         href="#pricing"
-                        class="text-sm font-medium text-slate-300 hover:text-white transition hidden md:block"
+                        class="hidden rounded text-sm text-slate-400 transition hover:text-white focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none md:block"
                     >
                         Pricing
                     </a>
 
-                    <div class="h-4 w-px bg-slate-800 hidden md:block"></div>
+                    <div
+                        class="hidden h-4 w-px bg-slate-800 md:block"
+                        aria-hidden="true"
+                    />
+
+                    <Link
+                        href="/login"
+                        class="hidden text-sm text-slate-400 transition hover:text-white focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none sm:block"
+                    >
+                        Sign In
+                    </Link>
+
+                    <Link
+                        v-if="canRegister"
+                        href="/register"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
+                    >
+                        <span>Get Started</span>
+                        <ArrowRight class="size-3.5" />
+                    </Link>
 
                     <a
                         href="/admin"
-                        class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700/80 transition"
+                        class="inline-flex items-center gap-2 rounded-lg border border-slate-700/80 bg-slate-900 px-3.5 py-1.5 text-xs font-semibold text-slate-200 transition hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
                     >
-                        <Shield class="w-3.5 h-3.5 text-indigo-400" />
+                        <Shield class="size-3.5 text-indigo-400" />
                         <span>Central Admin</span>
                     </a>
                 </nav>
@@ -118,180 +162,404 @@ const getPrice = (plan: Plan) => {
         </header>
 
         <!-- Hero Section -->
-        <section class="relative z-10 pt-20 pb-24 px-6 text-center max-w-5xl mx-auto">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 mb-8 shadow-sm">
-                <Sparkles class="w-3.5 h-3.5 text-indigo-400" />
-                <span>Production-Ready Multi-Tenant SaaS Kit for Laravel & Vue</span>
+        <section
+            class="relative z-10 mx-auto max-w-4xl px-6 pt-20 pb-20 text-center"
+        >
+            <div
+                class="mb-8 inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900 px-3 py-1 text-xs font-medium text-slate-300"
+            >
+                <span
+                    class="size-1.5 rounded-full bg-indigo-500"
+                    aria-hidden="true"
+                />
+                <span>Multi-Tenant Architecture for Modern SaaS</span>
             </div>
 
-            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight">
-                Launch Your B2B SaaS <br class="hidden sm:block" />
-                with <span class="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">Database-per-Tenant</span> Isolation
+            <h1
+                class="text-4xl leading-tight font-bold tracking-tight text-balance text-white sm:text-6xl"
+            >
+                Launch Your B2B SaaS with Complete Database Isolation
             </h1>
 
-            <p class="mt-6 text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto font-normal leading-relaxed">
-                Automated tenant provisioning, Filament central admin, Inertia + Vue 3 workspace app, Stripe multi-currency billing, Spatie permissions, and audit logging.
+            <p
+                class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed font-normal text-pretty text-slate-400 sm:text-xl"
+            >
+                Automated tenant database provisioning, Filament central admin,
+                Inertia + Vue 3 workspace app, Stripe multi-currency billing,
+                and domain-driven architecture.
             </p>
 
-            <!-- CTA Buttons -->
-            <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <!-- CTA Actions -->
+            <div
+                class="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
+            >
+                <Link
+                    v-if="canRegister"
+                    href="/register"
+                    class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none sm:w-auto"
+                >
+                    <Sparkles class="size-4" />
+                    <span>Create Workspace</span>
+                    <ArrowRight class="ml-0.5 size-4" />
+                </Link>
+
                 <a
                     href="/admin"
-                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 transition-all cursor-pointer"
+                    class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-800 bg-slate-900 px-6 py-3 text-sm font-semibold text-slate-200 transition hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none sm:w-auto"
                 >
-                    <Shield class="w-4 h-4" />
-                    <span>Open Central Admin (/admin)</span>
-                    <ArrowRight class="w-4 h-4 ml-1" />
+                    <Shield class="size-4 text-indigo-400" />
+                    <span>Central Admin</span>
                 </a>
 
                 <a
                     href="#architecture"
-                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-800 transition"
+                    class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-800/80 bg-slate-950 px-6 py-3 text-sm font-semibold text-slate-400 transition hover:border-slate-700 hover:text-slate-200 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none sm:w-auto"
                 >
-                    <Layers class="w-4 h-4 text-slate-400" />
-                    <span>Explore Architecture (Section 3.5)</span>
+                    <Layers class="size-4 text-slate-400" />
+                    <span>Domain Architecture</span>
                 </a>
             </div>
 
-            <!-- Credentials Quick Tip -->
-            <div class="mt-8 inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-slate-900/90 border border-slate-800 text-xs text-slate-400 shadow-inner">
-                <span class="font-mono text-indigo-400 font-semibold">Admin Panel:</span>
-                <span>admin@tenantforge.com</span>
-                <span class="text-slate-600">&bull;</span>
-                <span class="font-mono text-indigo-400 font-semibold">Password:</span>
-                <span>password</span>
+            <!-- Credentials Quick Reference -->
+            <div
+                class="mt-8 inline-flex flex-wrap items-center justify-center gap-2 rounded-xl border border-slate-800/90 bg-slate-900/90 px-4 py-2 text-xs text-slate-400"
+            >
+                <span class="font-mono font-medium text-indigo-400"
+                    >Central Admin:</span
+                >
+                <span class="font-mono text-slate-200"
+                    >admin@tenantforge.com</span
+                >
+                <span class="text-slate-600" aria-hidden="true">&bull;</span>
+                <span class="font-mono font-medium text-indigo-400"
+                    >Password:</span
+                >
+                <span class="font-mono text-slate-200">password</span>
+            </div>
+
+            <!-- Stats Bar -->
+            <div
+                class="mt-16 grid grid-cols-2 gap-4 rounded-2xl border border-slate-800/60 bg-slate-900/40 p-4 text-left sm:grid-cols-4"
+            >
+                <div class="px-4 py-2">
+                    <div class="text-2xl font-bold text-white tabular-nums">
+                        {{ props.metrics.tenants_count || '10+' }}
+                    </div>
+                    <div class="mt-0.5 text-xs text-slate-400">
+                        Isolated Tenants
+                    </div>
+                </div>
+                <div class="border-l border-slate-800/80 px-4 py-2">
+                    <div class="text-2xl font-bold text-white tabular-nums">
+                        {{ props.metrics.plans_count || '3' }}
+                    </div>
+                    <div class="mt-0.5 text-xs text-slate-400">
+                        Subscription Tiers
+                    </div>
+                </div>
+                <div
+                    class="border-t border-slate-800/80 px-4 py-2 sm:border-t-0 sm:border-l"
+                >
+                    <div class="text-2xl font-bold text-white tabular-nums">
+                        5
+                    </div>
+                    <div class="mt-0.5 text-xs text-slate-400">
+                        Global Currencies
+                    </div>
+                </div>
+                <div
+                    class="border-t border-slate-800/80 px-4 py-2 sm:border-t-0 sm:border-l"
+                >
+                    <div class="text-2xl font-bold text-white tabular-nums">
+                        0%
+                    </div>
+                    <div class="mt-0.5 text-xs text-slate-400">
+                        Data Leak Risk
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Feature Grid (6 Pillars) -->
-        <section id="features" class="relative z-10 py-20 border-t border-slate-900 bg-slate-950/50">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="text-center max-w-2xl mx-auto mb-16">
-                    <h2 class="text-3xl font-bold tracking-tight text-white">Full-Stack SaaS Capabilities Built-In</h2>
-                    <p class="mt-3 text-sm text-slate-400">
-                        Everything required to run a scalable, security-first multi-tenant platform out of the box.
+        <!-- Feature Grid (6 Core Capabilities) -->
+        <section
+            id="features"
+            class="relative z-10 border-t border-slate-900 bg-slate-950/60 py-20"
+        >
+            <div class="mx-auto max-w-7xl px-6">
+                <div class="mx-auto mb-16 max-w-2xl text-center">
+                    <h2
+                        class="text-3xl font-bold tracking-tight text-balance text-white"
+                    >
+                        Full-Stack SaaS Capabilities Built-In
+                    </h2>
+                    <p class="mt-3 text-sm text-pretty text-slate-400">
+                        Architected for complete security, strict tenant
+                        boundary enforcement, and developer velocity.
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div
+                    class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+                >
                     <!-- Feature 1 -->
-                    <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-indigo-500/40 transition group shadow-sm">
-                        <div class="w-12 h-12 rounded-xl bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mb-4 group-hover:scale-110 transition">
-                            <Database class="w-6 h-6" />
+                    <div
+                        class="flex flex-col justify-between rounded-2xl border border-slate-800/80 bg-slate-900/40 p-6 transition hover:border-slate-700"
+                    >
+                        <div>
+                            <div
+                                class="mb-4 flex size-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-900 text-indigo-400"
+                            >
+                                <Database class="size-5" />
+                            </div>
+                            <h3 class="mb-2 text-base font-semibold text-white">
+                                Database-per-Tenant Isolation
+                            </h3>
+                            <p
+                                class="text-xs leading-relaxed text-pretty text-slate-400"
+                            >
+                                Strict zero-leak data separation using
+                                <code class="font-mono text-slate-300"
+                                    >stancl/tenancy</code
+                                >. Each tenant gets a dedicated database
+                                dynamically provisioned upon registration.
+                            </p>
                         </div>
-                        <h3 class="text-base font-bold text-white mb-2">Database-per-Tenant Isolation</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Strict zero-leak data separation using <code class="text-indigo-300">stancl/tenancy</code>. Each tenant gets their own dedicated database dynamically provisioned.
-                        </p>
                     </div>
 
                     <!-- Feature 2 -->
-                    <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-indigo-500/40 transition group shadow-sm">
-                        <div class="w-12 h-12 rounded-xl bg-purple-600/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mb-4 group-hover:scale-110 transition">
-                            <Shield class="w-6 h-6" />
+                    <div
+                        class="flex flex-col justify-between rounded-2xl border border-slate-800/80 bg-slate-900/40 p-6 transition hover:border-slate-700"
+                    >
+                        <div>
+                            <div
+                                class="mb-4 flex size-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-900 text-indigo-400"
+                            >
+                                <Shield class="size-5" />
+                            </div>
+                            <h3 class="mb-2 text-base font-semibold text-white">
+                                Filament Central Admin
+                            </h3>
+                            <p
+                                class="text-xs leading-relaxed text-pretty text-slate-400"
+                            >
+                                Central SaaS owner command center for managing
+                                tenants, trial periods, subscription tiers,
+                                platform mailers, and comprehensive audit logs.
+                            </p>
                         </div>
-                        <h3 class="text-base font-bold text-white mb-2">Filament Central Admin</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Complete SaaS owner command center for managing tenants, extending trials, switching subscription tiers, and auditing logs.
-                        </p>
                     </div>
 
                     <!-- Feature 3 -->
-                    <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-indigo-500/40 transition group shadow-sm">
-                        <div class="w-12 h-12 rounded-xl bg-amber-600/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mb-4 group-hover:scale-110 transition">
-                            <ShieldAlert class="w-6 h-6" />
+                    <div
+                        class="flex flex-col justify-between rounded-2xl border border-slate-800/80 bg-slate-900/40 p-6 transition hover:border-slate-700"
+                    >
+                        <div>
+                            <div
+                                class="mb-4 flex size-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-900 text-indigo-400"
+                            >
+                                <ShieldAlert class="size-5" />
+                            </div>
+                            <h3 class="mb-2 text-base font-semibold text-white">
+                                Staff Impersonation Bridge
+                            </h3>
+                            <p
+                                class="text-xs leading-relaxed text-pretty text-slate-400"
+                            >
+                                Log in securely as any tenant user with a single
+                                click. Every action executed during
+                                impersonation is logged and attributed with an
+                                audit token.
+                            </p>
                         </div>
-                        <h3 class="text-base font-bold text-white mb-2">Staff Impersonation Bridge</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Log in as any tenant with a single click. Every action performed during impersonation is logged and marked with an audit token.
-                        </p>
                     </div>
 
                     <!-- Feature 4 -->
-                    <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-indigo-500/40 transition group shadow-sm">
-                        <div class="w-12 h-12 rounded-xl bg-emerald-600/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4 group-hover:scale-110 transition">
-                            <CreditCard class="w-6 h-6" />
+                    <div
+                        class="flex flex-col justify-between rounded-2xl border border-slate-800/80 bg-slate-900/40 p-6 transition hover:border-slate-700"
+                    >
+                        <div>
+                            <div
+                                class="mb-4 flex size-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-900 text-indigo-400"
+                            >
+                                <CreditCard class="size-5" />
+                            </div>
+                            <h3 class="mb-2 text-base font-semibold text-white">
+                                Multi-Currency Stripe Billing
+                            </h3>
+                            <p
+                                class="text-xs leading-relaxed text-pretty text-slate-400"
+                            >
+                                Normalized regional pricing across USD, EUR,
+                                GBP, BRL, and INR. Integrated with Laravel
+                                Cashier, webhooks, and self-serve customer
+                                billing portal.
+                            </p>
                         </div>
-                        <h3 class="text-base font-bold text-white mb-2">Multi-Currency Stripe Billing</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Normalized pricing across USD, EUR, GBP, BRL, and INR. Integrated with Laravel Cashier, Stripe Tax, and self-serve customer portal.
-                        </p>
                     </div>
 
                     <!-- Feature 5 -->
-                    <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-indigo-500/40 transition group shadow-sm">
-                        <div class="w-12 h-12 rounded-xl bg-blue-600/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mb-4 group-hover:scale-110 transition">
-                            <Users class="w-6 h-6" />
+                    <div
+                        class="flex flex-col justify-between rounded-2xl border border-slate-800/80 bg-slate-900/40 p-6 transition hover:border-slate-700"
+                    >
+                        <div>
+                            <div
+                                class="mb-4 flex size-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-900 text-indigo-400"
+                            >
+                                <Users class="size-5" />
+                            </div>
+                            <h3 class="mb-2 text-base font-semibold text-white">
+                                Spatie Team Permissions
+                            </h3>
+                            <p
+                                class="text-xs leading-relaxed text-pretty text-slate-400"
+                            >
+                                Multi-level hierarchical roles (<code
+                                    class="font-mono text-slate-300"
+                                    >owner</code
+                                >
+                                down to
+                                <code class="font-mono text-slate-300"
+                                    >viewer</code
+                                >) with signed token email invitations and
+                                member seat caps.
+                            </p>
                         </div>
-                        <h3 class="text-base font-bold text-white mb-2">Spatie Team Permissions</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Multi-level hierarchical roles (<code class="text-indigo-300">owner:100</code> down to <code class="text-indigo-300">viewer:20</code>) with signed token email invitations.
-                        </p>
                     </div>
 
                     <!-- Feature 6 -->
-                    <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-indigo-500/40 transition group shadow-sm">
-                        <div class="w-12 h-12 rounded-xl bg-rose-600/10 border border-rose-500/20 text-rose-400 flex items-center justify-center mb-4 group-hover:scale-110 transition">
-                            <Globe class="w-6 h-6" />
+                    <div
+                        class="flex flex-col justify-between rounded-2xl border border-slate-800/80 bg-slate-900/40 p-6 transition hover:border-slate-700"
+                    >
+                        <div>
+                            <div
+                                class="mb-4 flex size-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-900 text-indigo-400"
+                            >
+                                <Globe class="size-5" />
+                            </div>
+                            <h3 class="mb-2 text-base font-semibold text-white">
+                                Branding & RTL Locales
+                            </h3>
+                            <p
+                                class="text-xs leading-relaxed text-pretty text-slate-400"
+                            >
+                                Dynamic tenant SiteSettings for custom primary
+                                brand color, logo upload, timezone, currency
+                                format, and multi-language RTL support.
+                            </p>
                         </div>
-                        <h3 class="text-base font-bold text-white mb-2">Branding & RTL Locales</h3>
-                        <p class="text-xs text-slate-400 leading-relaxed">
-                            Isolated typed SiteSettings for custom brand color, logo, timezone, currency, and multi-language RTL support.
-                        </p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Section 3.5 Module-Ready Monolith Architecture Showcase -->
-        <section id="architecture" class="relative z-10 py-20 border-t border-slate-900">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <!-- Architecture Section (Domain Actions Monolith) -->
+        <section
+            id="architecture"
+            class="relative z-10 border-t border-slate-900 py-20"
+        >
+            <div class="mx-auto max-w-7xl px-6">
+                <div
+                    class="grid grid-cols-1 items-center gap-12 lg:grid-cols-2"
+                >
                     <div>
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 border border-purple-500/20 text-purple-300 mb-4">
-                            <Cpu class="w-3.5 h-3.5 text-purple-400" />
-                            <span>Section 3.5 Architecture</span>
+                        <div
+                            class="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900 px-3 py-1 text-xs font-medium text-slate-300"
+                        >
+                            <Cpu class="size-3.5 text-indigo-400" />
+                            <span>Domain-Driven Architecture</span>
                         </div>
-                        <h2 class="text-3xl font-bold tracking-tight text-white">Module-Ready Monolith Architecture</h2>
-                        <p class="mt-4 text-sm text-slate-400 leading-relaxed">
-                            TenantForge is built under <code class="text-indigo-300 font-mono">app/Domain/</code> with single-purpose Action classes powered by <code class="text-indigo-300 font-mono">lorisleiva/laravel-actions</code>.
+                        <h2
+                            class="text-3xl font-bold tracking-tight text-balance text-white"
+                        >
+                            Single-Purpose Action Classes
+                        </h2>
+                        <p
+                            class="mt-4 text-sm leading-relaxed text-pretty text-slate-400"
+                        >
+                            TenantForge encapsulates business logic under
+                            <code class="font-mono text-slate-200"
+                                >app/Domain/</code
+                            >
+                            with single-purpose Action classes powered by
+                            <code class="font-mono text-slate-200"
+                                >lorisleiva/laravel-actions</code
+                            >.
                         </p>
 
-                        <div class="mt-6 space-y-3 text-xs text-slate-300">
+                        <div class="mt-6 space-y-3.5 text-xs text-slate-300">
                             <div class="flex items-start gap-3">
-                                <CheckCircle2 class="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-                                <span><strong>Single-Purpose Actions:</strong> Business logic runs as controller, queued job, or CLI command with <code class="text-indigo-300">use AsAction;</code>.</span>
+                                <CheckCircle2
+                                    class="mt-0.5 size-4 shrink-0 text-emerald-400"
+                                />
+                                <span
+                                    ><strong>Single-Purpose Actions:</strong>
+                                    Logic can execute as a controller endpoint,
+                                    queued job, event listener, or CLI command
+                                    via
+                                    <code class="font-mono text-slate-200"
+                                        >use AsAction;</code
+                                    >.</span
+                                >
                             </div>
                             <div class="flex items-start gap-3">
-                                <CheckCircle2 class="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-                                <span><strong>Dedicated Service Providers:</strong> Each domain boots its own routes, configurations, and interfaces.</span>
+                                <CheckCircle2
+                                    class="mt-0.5 size-4 shrink-0 text-emerald-400"
+                                />
+                                <span
+                                    ><strong
+                                        >Isolated Service Providers:</strong
+                                    >
+                                    Every domain registers its own policies,
+                                    events, and bindings independently.</span
+                                >
                             </div>
                             <div class="flex items-start gap-3">
-                                <CheckCircle2 class="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-                                <span><strong>Decoupled Events:</strong> Inter-domain interactions communicate via lightweight events rather than tight model couplings.</span>
+                                <CheckCircle2
+                                    class="mt-0.5 size-4 shrink-0 text-emerald-400"
+                                />
+                                <span
+                                    ><strong>Strict Data Hygiene:</strong> No
+                                    direct database cross-contamination between
+                                    central tenant registry and tenant
+                                    databases.</span
+                                >
                             </div>
                         </div>
                     </div>
 
-                    <!-- Code preview card -->
-                    <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5 shadow-2xl font-mono text-xs text-slate-300 overflow-x-auto">
-                        <div class="flex items-center justify-between pb-3 border-b border-slate-800 text-slate-500 text-[11px]">
-                            <span>app/Domain/Teams/Actions/CreateTeamInvite.php</span>
-                            <span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">PHP 8.3</span>
+                    <!-- Code Preview Container -->
+                    <div
+                        class="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/90 font-mono text-xs shadow-lg"
+                    >
+                        <div
+                            class="flex items-center justify-between border-b border-slate-800 bg-slate-950/60 px-4 py-3 text-xs text-slate-400"
+                        >
+                            <div class="flex items-center gap-2">
+                                <Terminal class="size-3.5 text-slate-500" />
+                                <span
+                                    >app/Domain/Teams/Actions/CreateTeamInvite.php</span
+                                >
+                            </div>
+                            <span
+                                class="rounded bg-slate-800 px-2 py-0.5 text-[10px] font-medium text-slate-300"
+                                >PHP 8.3</span
+                            >
                         </div>
-                        <pre class="pt-4 text-slate-300 leading-relaxed"><code><span class="text-purple-400">class</span> <span class="text-yellow-300">CreateTeamInvite</span>
+                        <pre
+                            class="overflow-x-auto p-5 leading-relaxed text-slate-300"
+                        ><code><span class="text-indigo-400">class</span> <span class="text-slate-100 font-semibold">CreateTeamInvite</span>
 {
-    <span class="text-purple-400">use</span> <span class="text-indigo-300">AsAction</span>;
+    <span class="text-indigo-400">use</span> <span class="text-slate-200">AsAction</span>;
 
-    <span class="text-purple-400">public function</span> <span class="text-blue-400">handle</span>(Team $team, User $inviter, string $email, string $role): TeamInvite
+    <span class="text-indigo-400">public function</span> <span class="text-indigo-300">handle</span>(Team $team, User $inviter, string $email, string $role): TeamInvite
     {
-        <span class="text-purple-400">return</span> TeamInvite::<span class="text-blue-400">create</span>([
-            <span class="text-emerald-300">'team_id'</span>    =&gt; $team-&gt;id,
-            <span class="text-emerald-300">'email'</span>      =&gt; $email,
-            <span class="text-emerald-300">'role'</span>       =&gt; $role,
-            <span class="text-emerald-300">'token'</span>      =&gt; TeamInvite::<span class="text-blue-400">generateToken</span>(),
-            <span class="text-emerald-300">'invited_by'</span> =&gt; $inviter-&gt;id,
-            <span class="text-emerald-300">'status'</span>     =&gt; <span class="text-emerald-300">'pending'</span>,
+        <span class="text-indigo-400">return</span> TeamInvite::<span class="text-indigo-300">create</span>([
+            <span class="text-emerald-400">'team_id'</span>    =&gt; $team-&gt;id,
+            <span class="text-emerald-400">'email'</span>      =&gt; $email,
+            <span class="text-emerald-400">'role'</span>       =&gt; $role,
+            <span class="text-emerald-400">'token'</span>      =&gt; TeamInvite::<span class="text-indigo-300">generateToken</span>(),
+            <span class="text-emerald-400">'invited_by'</span> =&gt; $inviter-&gt;id,
+            <span class="text-emerald-400">'status'</span>     =&gt; <span class="text-emerald-400">'pending'</span>,
         ]);
     }
 }</code></pre>
@@ -300,63 +568,97 @@ const getPrice = (plan: Plan) => {
             </div>
         </section>
 
-        <!-- Pricing Preview Section -->
-        <section id="pricing" class="relative z-10 py-20 border-t border-slate-900 bg-slate-950/70">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <!-- Pricing Section -->
+        <section
+            id="pricing"
+            class="relative z-10 border-t border-slate-900 bg-slate-950/60 py-20"
+        >
+            <div class="mx-auto max-w-7xl px-6">
+                <div
+                    class="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end"
+                >
                     <div>
-                        <h2 class="text-3xl font-bold tracking-tight text-white">Multi-Currency Tiered Pricing</h2>
-                        <p class="mt-2 text-sm text-slate-400">
-                            Automatic regional currency presentation and feature flag gating.
+                        <h2
+                            class="text-3xl font-bold tracking-tight text-balance text-white"
+                        >
+                            Transparent Tiered Pricing
+                        </h2>
+                        <p class="mt-2 text-sm text-pretty text-slate-400">
+                            Regional currency support with Stripe Cashier and
+                            database-enforced feature gating.
                         </p>
                     </div>
 
-                    <!-- Currency Switcher -->
-                    <div class="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-slate-800 self-start">
+                    <!-- Currency Selector -->
+                    <div
+                        class="flex items-center gap-1 self-start rounded-xl border border-slate-800 bg-slate-900 p-1"
+                    >
                         <button
                             v-for="curr in availableCurrencies"
                             :key="curr"
+                            type="button"
                             @click="selectedCurrency = curr"
-                            :class="{
-                                'bg-indigo-600 text-white font-bold': selectedCurrency === curr,
-                                'text-slate-400 hover:text-white': selectedCurrency !== curr,
-                            }"
-                            class="px-3 py-1 rounded-lg text-xs transition cursor-pointer"
+                            :class="[
+                                selectedCurrency === curr
+                                    ? 'bg-indigo-600 font-semibold text-white shadow-sm'
+                                    : 'text-slate-400 hover:text-slate-200',
+                            ]"
+                            class="cursor-pointer rounded-lg px-3 py-1 text-xs transition focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
                         >
                             {{ curr }}
                         </button>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                     <div
                         v-for="plan in plans"
                         :key="plan.id"
-                        class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between"
+                        class="flex flex-col justify-between rounded-2xl border border-slate-800/80 bg-slate-900/40 p-6 transition hover:border-slate-700"
                     >
                         <div>
                             <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-bold text-white">{{ plan.name }}</h3>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-800 text-slate-300">
+                                <h3 class="text-base font-semibold text-white">
+                                    {{ plan.name }}
+                                </h3>
+                                <span
+                                    class="rounded-full border border-slate-800 bg-slate-900 px-2.5 py-0.5 text-[10px] font-semibold tracking-wider text-slate-300 uppercase"
+                                >
                                     {{ plan.billing_period }}
                                 </span>
                             </div>
 
                             <div class="mt-4 flex items-baseline">
-                                <span class="text-3xl font-extrabold text-white">
+                                <span
+                                    class="text-3xl font-bold text-white tabular-nums"
+                                >
                                     {{ getPrice(plan) }}
                                 </span>
-                                <span class="text-xs text-slate-400 ml-1.5">/{{ plan.billing_period }}</span>
+                                <span class="ml-1.5 text-xs text-slate-400"
+                                    >/{{ plan.billing_period }}</span
+                                >
                             </div>
 
-                            <div class="mt-6 pt-6 border-t border-slate-800 space-y-2.5 text-xs text-slate-300">
+                            <div
+                                class="mt-6 space-y-2.5 border-t border-slate-800/80 pt-6 text-xs text-slate-300"
+                            >
                                 <div class="flex items-center gap-2">
-                                    <Check class="w-4 h-4 text-emerald-400 shrink-0" />
-                                    <span>Isolated Database Connection</span>
+                                    <Check
+                                        class="size-4 shrink-0 text-emerald-400"
+                                    />
+                                    <span>Dedicated Tenant Database</span>
                                 </div>
-                                <div v-for="feat in plan.features" :key="feat" class="flex items-center gap-2">
-                                    <Check class="w-4 h-4 text-emerald-400 shrink-0" />
-                                    <span class="capitalize">{{ feat.replace('-', ' ') }}</span>
+                                <div
+                                    v-for="feat in plan.features"
+                                    :key="feat"
+                                    class="flex items-center gap-2"
+                                >
+                                    <Check
+                                        class="size-4 shrink-0 text-emerald-400"
+                                    />
+                                    <span class="capitalize">{{
+                                        feat.replace('-', ' ')
+                                    }}</span>
                                 </div>
                             </div>
                         </div>
@@ -364,7 +666,7 @@ const getPrice = (plan: Plan) => {
                         <div class="mt-8">
                             <a
                                 href="/admin"
-                                class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition text-center block"
+                                class="block w-full rounded-xl border border-slate-800 bg-slate-900 px-4 py-2.5 text-center text-xs font-semibold text-slate-200 transition hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:outline-none"
                             >
                                 Manage in Central Admin
                             </a>
@@ -375,10 +677,18 @@ const getPrice = (plan: Plan) => {
         </section>
 
         <!-- Footer -->
-        <footer class="relative z-10 border-t border-slate-900 py-10 px-6 text-center text-xs text-slate-500">
-            <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div class="flex items-center gap-2 text-slate-400 font-semibold">
-                    <Boxes class="w-4 h-4 text-indigo-400" />
+        <footer
+            class="relative z-10 border-t border-slate-900 px-6 py-10 text-xs text-slate-500"
+        >
+            <div
+                class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row"
+            >
+                <div class="flex items-center gap-2 font-medium text-slate-300">
+                    <div
+                        class="flex size-6 items-center justify-center rounded-lg border border-slate-800 bg-slate-900 text-indigo-400"
+                    >
+                        <Boxes class="size-3.5" />
+                    </div>
                     <span>TenantForge Starter Kit</span>
                 </div>
                 <p>&copy; 2026 TenantForge. All rights reserved.</p>

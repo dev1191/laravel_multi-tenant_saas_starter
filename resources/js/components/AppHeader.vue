@@ -87,9 +87,10 @@ const rightNavItems: NavItem[] = [
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                class="mr-2 h-9 w-9"
+                                class="mr-2 size-9"
+                                aria-label="Open navigation menu"
                             >
-                                <Menu class="h-5 w-5" />
+                                <Menu class="size-5" />
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="left" class="w-[300px] p-6">
@@ -120,7 +121,7 @@ const rightNavItems: NavItem[] = [
                                         <component
                                             v-if="item.icon"
                                             :is="item.icon"
-                                            class="h-5 w-5"
+                                            class="size-5"
                                         />
                                         {{ item.title }}
                                     </Link>
@@ -137,7 +138,7 @@ const rightNavItems: NavItem[] = [
                                         <component
                                             v-if="item.icon"
                                             :is="item.icon"
-                                            class="h-5 w-5"
+                                            class="size-5"
                                         />
                                         <span>{{ item.title }}</span>
                                     </a>
@@ -176,7 +177,7 @@ const rightNavItems: NavItem[] = [
                                     <component
                                         v-if="item.icon"
                                         :is="item.icon"
-                                        class="mr-2 h-4 w-4"
+                                        class="mr-2 size-4"
                                     />
                                     {{ item.title }}
                                 </Link>
@@ -194,7 +195,7 @@ const rightNavItems: NavItem[] = [
                         <Button
                             variant="ghost"
                             size="icon"
-                            class="group h-9 w-9 cursor-pointer"
+                            class="group size-9 cursor-pointer"
                         >
                             <Search
                                 class="size-5 opacity-80 group-hover:opacity-100"
@@ -213,7 +214,7 @@ const rightNavItems: NavItem[] = [
                                                 variant="ghost"
                                                 size="icon"
                                                 as-child
-                                                class="group h-9 w-9 cursor-pointer"
+                                                class="group size-9 cursor-pointer"
                                             >
                                                 <a
                                                     :href="toUrl(item.href)"

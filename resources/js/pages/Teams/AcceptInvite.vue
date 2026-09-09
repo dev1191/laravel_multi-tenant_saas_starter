@@ -29,14 +29,14 @@ const acceptInvite = () => {
 <template>
     <Head :title="`Join ${invite.team_name}`" />
 
-    <div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6 text-gray-900 dark:text-gray-100">
+    <div class="min-h-dvh bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6 text-gray-900 dark:text-gray-100">
         <div class="max-w-md w-full bg-card rounded-2xl border shadow-xl p-8">
-            <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center mb-6 shadow-sm">
-                <Users class="w-6 h-6" />
+            <div class="size-12 bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center mb-6 shadow-sm">
+                <Users class="size-6" />
             </div>
 
-            <h1 class="text-2xl font-bold tracking-tight">Join {{ invite.team_name }}</h1>
-            <p class="text-sm text-muted-foreground mt-1 mb-6">
+            <h1 class="text-2xl font-bold tracking-tight text-balance">Join {{ invite.team_name }}</h1>
+            <p class="text-sm text-muted-foreground mt-1 mb-6 text-pretty">
                 <strong>{{ invite.invited_by }}</strong> has invited you to join the team as a <span class="capitalize font-semibold text-indigo-600 dark:text-indigo-400">{{ invite.role }}</span>.
             </p>
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
+import { onMounted, watch } from 'vue';
 import AppContent from '@/components/AppContent.vue';
 import AppShell from '@/components/AppShell.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
@@ -22,6 +22,7 @@ const page = usePage();
 
 onMounted(() => {
     const brandColor = (page.props.site_settings as any)?.primary_color;
+
     if (brandColor) {
         updateBrandColor(brandColor);
     }

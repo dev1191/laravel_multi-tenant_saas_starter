@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { CloudUpload, Link as LinkIcon, Trash2, X } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
-import { CloudUpload, Eye, Image as ImageIcon, Link as LinkIcon, Trash2, X } from 'lucide-vue-next';
 
 interface Props {
     label?: string;
@@ -38,6 +38,7 @@ const triggerFileInput = () => {
 
 const handleFileSelect = (event: Event) => {
     const target = event.target as HTMLInputElement;
+
     if (target.files && target.files[0]) {
         processFile(target.files[0]);
     }
@@ -45,7 +46,10 @@ const handleFileSelect = (event: Event) => {
 
 const handleDrop = (event: DragEvent) => {
     isDragging.value = false;
-    if (props.disabled) return;
+
+    if (props.disabled) {
+return;
+}
 
     if (event.dataTransfer?.files && event.dataTransfer.files[0]) {
         processFile(event.dataTransfer.files[0]);
@@ -57,6 +61,7 @@ const processFile = (file: File) => {
 
     if (file.size > props.maxSizeMb * 1024 * 1024) {
         errorMessage.value = `File exceeds maximum size of ${props.maxSizeMb}MB`;
+
         return;
     }
 
@@ -73,6 +78,7 @@ const processFile = (file: File) => {
 const clearValue = () => {
     model.value = '';
     errorMessage.value = null;
+
     if (fileInput.value) {
         fileInput.value.value = '';
     }
@@ -104,7 +110,7 @@ const previewBgClass = computed(() => {
                 @click="showUrlInput = !showUrlInput"
                 class="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-indigo-600 dark:hover:text-indigo-400 transition cursor-pointer"
             >
-                <LinkIcon class="w-3 h-3" />
+                <LinkIcon class="size-3" />
                 <span>{{ showUrlInput ? 'Switch to Upload' : 'Enter URL / Path' }}</span>
             </button>
         </div>
@@ -135,8 +141,9 @@ const previewBgClass = computed(() => {
                     @click="clearValue"
                     class="p-2 text-muted-foreground hover:text-red-500 rounded-lg border hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer"
                     title="Clear"
+                    aria-label="Clear value"
                 >
-                    <X class="w-4 h-4" />
+                    <X class="size-4" />
                 </button>
             </div>
         </div>
@@ -157,12 +164,12 @@ const previewBgClass = computed(() => {
                 ]"
             >
                 <div class="p-2.5 rounded-full bg-muted/80 text-muted-foreground group-hover:text-indigo-600 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-950/60 transition mb-2">
-                    <CloudUpload class="w-5 h-5" />
+                    <CloudUpload class="size-5" />
                 </div>
-                <p class="text-xs font-semibold text-foreground">
+                <p class="text-xs font-semibold text-foreground text-balance">
                     Click to browse <span class="font-normal text-muted-foreground">or drag and drop file</span>
                 </p>
-                <p class="text-[11px] text-muted-foreground mt-0.5">
+                <p class="text-[11px] text-muted-foreground mt-0.5 text-pretty">
                     PNG, SVG, WEBP, or JPG (max {{ maxSizeMb }}MB)
                 </p>
             </div>
@@ -204,8 +211,9 @@ const previewBgClass = computed(() => {
                         @click="clearValue"
                         class="p-1.5 text-muted-foreground hover:text-red-500 rounded-md hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer"
                         title="Delete image"
+                        aria-label="Delete image"
                     >
-                        <Trash2 class="w-4 h-4" />
+                        <Trash2 class="size-4" />
                     </button>
                 </div>
             </div>

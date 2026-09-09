@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
 import { History, ShieldAlert, User } from 'lucide-vue-next';
+import AppLayout from '@/layouts/AppLayout.vue';
 
 interface ActivityItem {
     id: number;
@@ -48,8 +48,8 @@ const breadcrumbs = [
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex flex-1 flex-col gap-6 p-6">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight">Audit Stream & Activity Logs</h1>
-                <p class="text-sm text-muted-foreground">
+                <h1 class="text-2xl font-bold tracking-tight text-balance">Audit Stream & Activity Logs</h1>
+                <p class="text-sm text-muted-foreground text-pretty">
                     Chronological audit trail of all workspace actions and changes, including staff impersonation tags.
                 </p>
             </div>
@@ -66,8 +66,8 @@ const breadcrumbs = [
                         class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-3 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition"
                     >
                         <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 text-xs font-semibold">
-                                <History class="w-4 h-4" />
+                            <div class="size-8 rounded-full bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 text-xs font-semibold">
+                                <History class="size-4" />
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -75,7 +75,7 @@ const breadcrumbs = [
                                     {{ act.description }}
                                 </p>
                                 <div class="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
-                                    <span>{{ act.created_at }}</span>
+                                    <span class="tabular-nums">{{ act.created_at }}</span>
                                     <span v-if="act.subject_type" class="font-mono text-[11px] bg-gray-100 dark:bg-gray-800 px-1.5 py-0.2 rounded">
                                         {{ act.subject_type }}
                                     </span>
@@ -89,7 +89,7 @@ const breadcrumbs = [
                                 class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300"
                                 title="Action performed during staff impersonation"
                             >
-                                <ShieldAlert class="w-3.5 h-3.5" />
+                                <ShieldAlert class="size-3.5" />
                                 <span>Staff Impersonated</span>
                             </span>
                         </div>

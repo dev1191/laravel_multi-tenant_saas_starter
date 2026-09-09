@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import AppLayout from '@/layouts/AppLayout.vue';
 import {
     CheckCircle2,
     Clock,
@@ -13,6 +11,8 @@ import {
     Sparkles,
     Users,
 } from 'lucide-vue-next';
+import { computed } from 'vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 
 interface Task {
     id: number;
@@ -85,14 +85,14 @@ const breadcrumbs = [
                 class="rounded-xl border border-indigo-200 bg-indigo-50/70 dark:border-indigo-900/50 dark:bg-indigo-950/30 p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm"
             >
                 <div class="flex items-center gap-3.5">
-                    <div class="w-10 h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow">
-                        <Sparkles class="w-5 h-5" />
+                    <div class="size-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow">
+                        <Sparkles class="size-5" />
                     </div>
                     <div>
-                        <h2 class="text-base font-semibold text-gray-900 dark:text-white">
+                        <h2 class="text-base font-semibold text-gray-900 dark:text-white text-balance">
                             {{ $t('dashboard.trial_banner_title') }}
                         </h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                        <p class="text-sm text-gray-600 dark:text-gray-300 text-pretty">
                             {{ $t('dashboard.trial_banner_desc', { workspace: tenant?.name || '', ends_at: tenant?.trial_ends_at || 'soon' }) }}
                         </p>
                     </div>
@@ -101,7 +101,7 @@ const breadcrumbs = [
                     href="/billing"
                     class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition shadow"
                 >
-                    <CreditCard class="w-4 h-4" />
+                    <CreditCard class="size-4" />
                     <span>{{ $t('dashboard.choose_plan') }}</span>
                 </Link>
             </div>
@@ -111,18 +111,18 @@ const breadcrumbs = [
                 <div class="rounded-xl border border-sidebar-border/70 dark:border-sidebar-border bg-card p-5 shadow-sm">
                     <div class="flex items-center justify-between">
                         <span class="text-sm font-medium text-muted-foreground">{{ $t('dashboard.total_tasks') }}</span>
-                        <ListTodo class="w-5 h-5 text-indigo-500" />
+                        <ListTodo class="size-5 text-indigo-500" />
                     </div>
-                    <div class="mt-3 text-2xl font-bold tracking-tight">{{ stats.total_tasks }}</div>
+                    <div class="mt-3 text-2xl font-bold tracking-tight tabular-nums">{{ stats.total_tasks }}</div>
                     <p class="mt-1 text-xs text-muted-foreground">{{ $t('tasks.title') }}</p>
                 </div>
 
                 <div class="rounded-xl border border-sidebar-border/70 dark:border-sidebar-border bg-card p-5 shadow-sm">
                     <div class="flex items-center justify-between">
                         <span class="text-sm font-medium text-muted-foreground">{{ $t('dashboard.completed') }}</span>
-                        <CheckCircle2 class="w-5 h-5 text-emerald-500" />
+                        <CheckCircle2 class="size-5 text-emerald-500" />
                     </div>
-                    <div class="mt-3 text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
+                    <div class="mt-3 text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 tabular-nums">
                         {{ stats.completed_tasks }}
                     </div>
                     <p class="mt-1 text-xs text-muted-foreground">{{ $t('tasks.completed') }}</p>
@@ -131,9 +131,9 @@ const breadcrumbs = [
                 <div class="rounded-xl border border-sidebar-border/70 dark:border-sidebar-border bg-card p-5 shadow-sm">
                     <div class="flex items-center justify-between">
                         <span class="text-sm font-medium text-muted-foreground">{{ $t('dashboard.pending') }}</span>
-                        <Clock class="w-5 h-5 text-amber-500" />
+                        <Clock class="size-5 text-amber-500" />
                     </div>
-                    <div class="mt-3 text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400">
+                    <div class="mt-3 text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400 tabular-nums">
                         {{ stats.pending_tasks }}
                     </div>
                     <p class="mt-1 text-xs text-muted-foreground">{{ $t('tasks.pending') }}</p>
@@ -142,9 +142,9 @@ const breadcrumbs = [
                 <div class="rounded-xl border border-sidebar-border/70 dark:border-sidebar-border bg-card p-5 shadow-sm">
                     <div class="flex items-center justify-between">
                         <span class="text-sm font-medium text-muted-foreground">{{ $t('dashboard.team_members') }}</span>
-                        <Users class="w-5 h-5 text-blue-500" />
+                        <Users class="size-5 text-blue-500" />
                     </div>
-                    <div class="mt-3 text-2xl font-bold tracking-tight">{{ stats.team_members_count }}</div>
+                    <div class="mt-3 text-2xl font-bold tracking-tight tabular-nums">{{ stats.team_members_count }}</div>
                     <p class="mt-1 text-xs text-muted-foreground">{{ $t('teams.title') }}</p>
                 </div>
             </div>
@@ -156,8 +156,8 @@ const breadcrumbs = [
                     <div>
                         <div class="flex items-center justify-between mb-4">
                             <div>
-                                <h3 class="text-lg font-semibold tracking-tight">{{ $t('dashboard.recent_tasks') }}</h3>
-                                <p class="text-xs text-muted-foreground">{{ $t('tasks.title') }}</p>
+                                <h3 class="text-lg font-semibold tracking-tight text-balance">{{ $t('dashboard.recent_tasks') }}</h3>
+                                <p class="text-xs text-muted-foreground text-pretty">{{ $t('tasks.title') }}</p>
                             </div>
                             <Link
                                 href="/tasks"
@@ -168,13 +168,13 @@ const breadcrumbs = [
                         </div>
 
                         <div v-if="recent_tasks.length === 0" class="text-center py-10 text-muted-foreground">
-                            <ListTodo class="w-10 h-10 mx-auto text-gray-300 dark:text-gray-600 mb-2" />
+                            <ListTodo class="size-10 mx-auto text-gray-300 dark:text-gray-600 mb-2" />
                             <p class="text-sm">{{ $t('dashboard.no_tasks') }}</p>
                             <Link
                                 href="/tasks"
                                 class="mt-3 inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:underline"
                             >
-                                <PlusCircle class="w-3.5 h-3.5" />
+                                <PlusCircle class="size-3.5" />
                                 {{ $t('tasks.create') }}
                             </Link>
                         </div>
@@ -214,8 +214,8 @@ const breadcrumbs = [
                 <div class="rounded-xl border border-sidebar-border/70 dark:border-sidebar-border bg-card p-6 shadow-sm">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center gap-2">
-                            <History class="w-4 h-4 text-muted-foreground" />
-                            <h3 class="text-lg font-semibold tracking-tight">{{ $t('dashboard.recent_activity') }}</h3>
+                            <History class="size-4 text-muted-foreground" />
+                            <h3 class="text-lg font-semibold tracking-tight text-balance">{{ $t('dashboard.recent_activity') }}</h3>
                         </div>
                         <Link
                             href="/activity"
@@ -235,19 +235,19 @@ const breadcrumbs = [
                             :key="act.id"
                             class="flex items-start gap-3 text-xs"
                         >
-                            <div class="w-2 h-2 rounded-full bg-indigo-500 mt-1.5 shrink-0"></div>
+                            <div class="size-2 rounded-full bg-indigo-500 mt-1.5 shrink-0"></div>
                             <div class="flex-1">
                                 <p class="text-gray-800 dark:text-gray-200">
                                     <span class="font-semibold">{{ act.causer_name }}</span>
                                     {{ act.description }}
                                 </p>
                                 <div class="flex items-center gap-2 mt-0.5 text-muted-foreground">
-                                    <span>{{ act.created_at }}</span>
+                                    <span class="tabular-nums">{{ act.created_at }}</span>
                                     <span
                                         v-if="act.is_impersonated"
                                         class="inline-flex items-center gap-1 text-[10px] bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 px-1.5 py-0.2 rounded font-medium"
                                     >
-                                        <ShieldAlert class="w-3 h-3" />
+                                        <ShieldAlert class="size-3" />
                                         Impersonated
                                     </span>
                                 </div>

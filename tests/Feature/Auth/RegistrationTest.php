@@ -16,13 +16,19 @@ test('registration screen can be rendered', function () {
 });
 
 test('new users can register', function () {
+    \Illuminate\Support\Facades\Queue::fake();
+
+    $slug = 'test'.\Illuminate\Support\Str::lower(\Illuminate\Support\Str::random(6));
+
     $response = $this->post(route('register.store'), [
         'name' => 'Test User',
-        'email' => 'test@example.com',
+        'email' => "test_{$slug}@example.com",
         'password' => 'password',
         'password_confirmation' => 'password',
+        'workspace_name' => 'Test Workspace',
+        'subdomain' => $slug,
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect("/onboarding/{$slug}");
 });

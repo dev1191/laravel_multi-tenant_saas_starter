@@ -55,7 +55,7 @@ const selectTheme = (value: ThemeMode) => {
                     : 'border-border hover:bg-neutral-50 dark:hover:bg-neutral-800/50 text-muted-foreground hover:text-foreground'
             ]"
         >
-            <component :is="opt.icon" class="w-4 h-4 shrink-0" :class="opt.iconClass" />
+            <component :is="opt.icon" class="size-4 shrink-0" :class="opt.iconClass" />
             <span>{{ opt.label }}</span>
         </button>
     </div>

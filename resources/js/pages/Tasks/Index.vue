@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+import { CheckCircle2, Circle, Clock, Plus, Trash2 } from 'lucide-vue-next';
 import { ref } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { CheckCircle2, Circle, Clock, Plus, Trash2 } from 'lucide-vue-next';
 
 interface Task {
     id: number;
@@ -77,8 +77,8 @@ const breadcrumbs = [
         <div class="flex flex-1 flex-col gap-6 p-6">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight">{{ $t('tasks.title') }}</h1>
-                    <p class="text-sm text-muted-foreground">
+                    <h1 class="text-2xl font-bold tracking-tight text-balance">{{ $t('tasks.title') }}</h1>
+                    <p class="text-sm text-muted-foreground text-pretty">
                         {{ $t('dashboard.recent_tasks') }}
                     </p>
                 </div>
@@ -86,7 +86,7 @@ const breadcrumbs = [
                     @click="showCreateModal = true"
                     class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg shadow transition cursor-pointer"
                 >
-                    <Plus class="w-4 h-4" />
+                    <Plus class="size-4" />
                     <span>{{ $t('tasks.create') }}</span>
                 </button>
             </div>
@@ -107,9 +107,10 @@ const breadcrumbs = [
                             <button
                                 @click="updateStatus(task, task.status === 'completed' ? 'todo' : 'completed')"
                                 class="mt-0.5 text-muted-foreground hover:text-indigo-600 transition cursor-pointer"
+                                aria-label="Toggle task status"
                             >
-                                <CheckCircle2 v-if="task.status === 'completed'" class="w-5 h-5 text-emerald-500" />
-                                <Circle v-else class="w-5 h-5" />
+                                <CheckCircle2 v-if="task.status === 'completed'" class="size-5 text-emerald-500" />
+                                <Circle v-else class="size-5" />
                             </button>
                             <div class="min-w-0 flex-1">
                                 <h3
@@ -118,15 +119,15 @@ const breadcrumbs = [
                                 >
                                     {{ task.title }}
                                 </h3>
-                                <p v-if="task.description" class="text-xs text-muted-foreground mt-0.5">
+                                <p v-if="task.description" class="text-xs text-muted-foreground mt-0.5 text-pretty">
                                     {{ task.description }}
                                 </p>
                                 <div class="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                                     <span v-if="task.assigned_user" class="inline-flex items-center gap-1">
                                         {{ $t('tasks.assigned_to') }}: <strong class="font-medium text-gray-700 dark:text-gray-300">{{ task.assigned_user.name }}</strong>
                                     </span>
-                                    <span v-if="task.due_at" class="inline-flex items-center gap-1">
-                                        <Clock class="w-3 h-3" /> {{ $t('tasks.due_date') }}: {{ task.due_at }}
+                                    <span v-if="task.due_at" class="inline-flex items-center gap-1 tabular-nums">
+                                        <Clock class="size-3" /> {{ $t('tasks.due_date') }}: {{ task.due_at }}
                                     </span>
                                 </div>
                             </div>
@@ -148,8 +149,9 @@ const breadcrumbs = [
                                 @click="deleteTask(task.id)"
                                 class="text-muted-foreground hover:text-red-500 p-1.5 rounded transition cursor-pointer"
                                 :title="$t('common.delete')"
+                                :aria-label="$t('common.delete') || 'Delete task'"
                             >
-                                <Trash2 class="w-4 h-4" />
+                                <Trash2 class="size-4" />
                             </button>
                         </div>
                     </div>
@@ -162,7 +164,7 @@ const breadcrumbs = [
                 class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
             >
                 <div class="bg-card w-full max-w-lg rounded-xl border shadow-xl p-6">
-                    <h2 class="text-lg font-semibold mb-4">{{ $t('tasks.create') }}</h2>
+                    <h2 class="text-lg font-semibold mb-4 text-balance">{{ $t('tasks.create') }}</h2>
                     <form @submit.prevent="submitTask" class="space-y-4">
                         <div>
                             <label class="block text-xs font-medium text-muted-foreground mb-1">{{ $t('tasks.task_title') }}</label>

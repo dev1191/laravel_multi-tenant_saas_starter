@@ -22,6 +22,7 @@ const languageOptions = computed(() => {
         { code: 'ne', name: 'Nepali', flag: '🇳🇵' },
         { code: 'pt_BR', name: 'Portuguese (Brazil)', flag: '🇧🇷' },
     ];
+
     return list;
 });
 </script>

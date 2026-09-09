@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { computed, getCurrentInstance } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
 import {
     AlertCircle,
     Check,
@@ -11,6 +9,8 @@ import {
     Sparkles,
     Zap,
 } from 'lucide-vue-next';
+import { computed, getCurrentInstance } from 'vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 
 interface PlanPrice {
     id: number;
@@ -70,6 +70,7 @@ const t = (key: string, replacements: Record<string, string | number> = {}) => {
     if (instance?.appContext.config.globalProperties.$t) {
         return instance.appContext.config.globalProperties.$t(key, replacements);
     }
+
     return key;
 };
 
@@ -77,8 +78,13 @@ const currentPlan = computed(() => props.plans.find((p) => p.is_current));
 const currentPlanAmount = computed(() => currentPlan.value?.price?.amount ?? 0);
 
 const getPlanActionLabel = (plan: Plan) => {
-    if (plan.is_current) return t('billing.current_plan');
-    if (!plan.price) return t('billing.choose', { plan: plan.name });
+    if (plan.is_current) {
+return t('billing.current_plan');
+}
+
+    if (!plan.price) {
+return t('billing.choose', { plan: plan.name });
+}
 
     const isHigher = plan.price.amount > currentPlanAmount.value;
 
@@ -94,11 +100,14 @@ const openPortal = () => {
 };
 
 const selectPlan = (plan: Plan) => {
-    if (plan.is_current || !plan.price) return;
+    if (plan.is_current || !plan.price) {
+return;
+}
 
     // If active recurring subscriber, redirect to billing portal to adjust plan safely with proration
     if (props.subscription && !props.subscription.on_grace_period && props.tenant.status === 'active') {
         openPortal();
+
         return;
     }
 
@@ -109,6 +118,7 @@ const selectPlan = (plan: Plan) => {
 
 const cancelSubscription = () => {
     const message = t('billing.cancel_confirm') || 'Are you sure you want to cancel your subscription? You will retain access until the end of your billing period.';
+
     if (confirm(message)) {
         router.post('/billing/cancel');
     }
@@ -130,8 +140,8 @@ const breadcrumbs = [
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex flex-1 flex-col gap-6 p-6">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight">{{ $t('billing.title') }}</h1>
-                <p class="text-sm text-muted-foreground">
+                <h1 class="text-2xl font-bold tracking-tight text-balance">{{ $t('billing.title') }}</h1>
+                <p class="text-sm text-muted-foreground text-pretty">
                     {{ $t('billing.subtitle') }}
                 </p>
             </div>
@@ -155,10 +165,10 @@ const breadcrumbs = [
                             </span>
                         </div>
                         <p v-if="tenant.on_trial" class="text-xs text-muted-foreground mt-1">
-                            {{ $t('billing.free_trial_banner', { ends_at: tenant.trial_ends_at }) }}
+                            {{ $t('billing.free_trial_banner', { ends_at: tenant.trial_ends_at || '' }) }}
                         </p>
                         <p v-if="subscription?.on_grace_period" class="text-xs text-amber-600 dark:text-amber-400 mt-1">
-                            {{ $t('billing.grace_period_banner', { ends_at: subscription.ends_at }) }}
+                            {{ $t('billing.grace_period_banner', { ends_at: subscription.ends_at || '' }) }}
                         </p>
                     </div>
 
@@ -168,9 +178,9 @@ const breadcrumbs = [
                             @click="openPortal"
                             class="inline-flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer"
                         >
-                            <CreditCard class="w-4 h-4" />
+                            <CreditCard class="size-4" />
                             <span>{{ $t('billing.manage_payment_and_invoices') }}</span>
-                            <ExternalLink class="w-3.5 h-3.5 text-muted-foreground" />
+                            <ExternalLink class="size-3.5 text-muted-foreground" />
                         </button>
 
                         <button
@@ -194,7 +204,7 @@ const breadcrumbs = [
 
             <!-- Available Plans Grid -->
             <div>
-                <h3 class="text-lg font-semibold mb-4">{{ $t('billing.choose_plan_desc') }}</h3>
+                <h3 class="text-lg font-semibold mb-4 text-balance">{{ $t('billing.choose_plan_desc') }}</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div
                         v-for="plan in plans"
@@ -216,7 +226,7 @@ const breadcrumbs = [
                                 </span>
                             </div>
                             <div class="mt-4 flex items-baseline">
-                                <span class="text-3xl font-extrabold tracking-tight">
+                                <span class="text-3xl font-extrabold tracking-tight tabular-nums">
                                     {{ plan.price?.formatted || 'Free' }}
                                 </span>
                                 <span v-if="plan.price" class="text-xs text-muted-foreground ml-1">/{{ plan.billing_period }}</span>
@@ -226,11 +236,11 @@ const breadcrumbs = [
                                 <p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{{ $t('billing.features_included') }}</p>
                                 <ul class="space-y-2 text-xs">
                                     <li class="flex items-center gap-2">
-                                        <Check class="w-4 h-4 text-emerald-500 shrink-0" />
+                                        <Check class="size-4 text-emerald-500 shrink-0" />
                                         <span>Full isolated database isolation</span>
                                     </li>
                                     <li v-for="feat in plan.features" :key="feat" class="flex items-center gap-2">
-                                        <Check class="w-4 h-4 text-emerald-500 shrink-0" />
+                                        <Check class="size-4 text-emerald-500 shrink-0" />
                                         <span class="capitalize">{{ feat.replace('-', ' ') }}</span>
                                     </li>
                                 </ul>
@@ -249,7 +259,7 @@ const breadcrumbs = [
                                 class="w-full py-2.5 px-4 rounded-lg text-sm font-semibold transition cursor-pointer flex items-center justify-center gap-1.5"
                             >
                                 <span>{{ getPlanActionLabel(plan) }}</span>
-                                <ExternalLink v-if="subscription && !subscription.on_grace_period && tenant.status === 'active'" class="w-3.5 h-3.5 opacity-60" />
+                                <ExternalLink v-if="subscription && !subscription.on_grace_period && tenant.status === 'active'" class="size-3.5 opacity-60" />
                             </button>
                             <button
                                 v-else-if="plan.is_current"

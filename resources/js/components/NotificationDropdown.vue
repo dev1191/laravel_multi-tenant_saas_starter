@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import {
     Bell,
@@ -10,6 +9,7 @@ import {
     AlertCircle,
     ExternalLink
 } from 'lucide-vue-next';
+import { computed } from 'vue';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -103,7 +103,7 @@ const getIconColor = (type: string) => {
                 <Bell class="size-5" />
                 <span
                     v-if="unreadCount > 0"
-                    class="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white shadow-sm"
+                    class="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white shadow-sm tabular-nums"
                 >
                     {{ unreadCount > 99 ? '99+' : unreadCount }}
                 </span>
@@ -116,7 +116,7 @@ const getIconColor = (type: string) => {
                     <span class="font-semibold text-sm">Notifications</span>
                     <span
                         v-if="unreadCount > 0"
-                        class="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
+                        class="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary tabular-nums"
                     >
                         {{ unreadCount }} new
                     </span>

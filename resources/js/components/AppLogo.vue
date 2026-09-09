@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import AppLogoIcon from '@/components/AppLogoIcon.vue';
 
 const page = usePage();
 const siteSettings = computed(() => (page.props.site_settings as any) || {});

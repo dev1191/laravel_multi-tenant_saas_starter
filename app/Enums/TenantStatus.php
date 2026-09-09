@@ -12,6 +12,7 @@ enum TenantStatus: string implements HasColor, HasIcon, HasLabel
     case Trial = 'trial';
     case Suspended = 'suspended';
     case Provisioning = 'provisioning';
+    case Failed = 'failed';
 
     public function getLabel(): ?string
     {
@@ -20,6 +21,7 @@ enum TenantStatus: string implements HasColor, HasIcon, HasLabel
             self::Trial => 'Trial',
             self::Suspended => 'Suspended',
             self::Provisioning => 'Provisioning',
+            self::Failed => 'Failed',
         };
     }
 
@@ -30,6 +32,7 @@ enum TenantStatus: string implements HasColor, HasIcon, HasLabel
             self::Trial => 'warning',
             self::Suspended => 'danger',
             self::Provisioning => 'info',
+            self::Failed => 'danger',
         };
     }
 
@@ -40,6 +43,7 @@ enum TenantStatus: string implements HasColor, HasIcon, HasLabel
             self::Trial => 'heroicon-o-clock',
             self::Suspended => 'heroicon-o-no-symbol',
             self::Provisioning => 'heroicon-o-arrow-path',
+            self::Failed => 'heroicon-o-x-circle',
         };
     }
 }

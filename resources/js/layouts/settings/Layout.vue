@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
+import { Palette, Settings, ShieldCheck, User } from 'lucide-vue-next';
 import { computed } from 'vue';
-import AppLayout from '@/layouts/AppLayout.vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { toUrl } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editProfile } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
-import { Palette, Settings, ShieldCheck, User } from 'lucide-vue-next';
 import type { NavItem, BreadcrumbItem } from '@/types';
 
 withDefaults(defineProps<{
@@ -22,6 +22,7 @@ withDefaults(defineProps<{
 const page = usePage();
 const isAdmin = computed(() => {
     const user = page.props.auth?.user as any;
+
     return user ? (user.is_admin || user.is_owner || user.role_level >= 80) : false;
 });
 
@@ -83,7 +84,7 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
                             as-child
                         >
                             <Link :href="item.href">
-                                <component :is="item.icon" class="h-4 w-4 mr-2" />
+                                <component :is="item.icon" class="size-4 mr-2" />
                                 {{ item.title }}
                             </Link>
                         </Button>

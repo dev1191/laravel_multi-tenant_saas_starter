@@ -11,9 +11,9 @@ import {
     ExternalLink,
     Check,
 } from 'lucide-vue-next';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
 
 interface NotificationItem {
@@ -115,11 +115,11 @@ const getIconColor = (type: string) => {
             <!-- Header -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b pb-5">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                    <h1 class="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2 text-balance">
                         <Bell class="size-6" />
                         <span>Notifications</span>
                     </h1>
-                    <p class="text-sm text-muted-foreground mt-1">
+                    <p class="text-sm text-muted-foreground mt-1 text-pretty">
                         View and manage your workspace alerts and updates.
                     </p>
                 </div>
@@ -164,7 +164,7 @@ const getIconColor = (type: string) => {
                     <span
                         v-if="unreadCount > 0"
                         :class="[
-                            'px-1.5 py-0.2 rounded-full text-[10px] font-bold',
+                            'px-1.5 py-0.2 rounded-full text-[10px] font-bold tabular-nums',
                             filter === 'unread' ? 'bg-primary-foreground/20 text-primary-foreground' : 'bg-primary/20 text-primary'
                         ]"
                     >
@@ -205,12 +205,12 @@ const getIconColor = (type: string) => {
                                     </Badge>
                                 </div>
 
-                                <p class="text-sm text-muted-foreground">
+                                <p class="text-sm text-muted-foreground text-pretty">
                                     {{ notification.message }}
                                 </p>
 
                                 <div class="flex items-center gap-4 pt-1">
-                                    <span class="text-xs text-muted-foreground">
+                                    <span class="text-xs text-muted-foreground tabular-nums">
                                         {{ notification.created_at_formatted }} ({{ notification.created_at }})
                                     </span>
 
@@ -235,6 +235,7 @@ const getIconColor = (type: string) => {
                                 class="size-8 text-muted-foreground hover:text-foreground"
                                 @click="markAsRead(notification.id)"
                                 title="Mark as read"
+                                aria-label="Mark notification as read"
                             >
                                 <Check class="size-4" />
                             </Button>
@@ -245,6 +246,7 @@ const getIconColor = (type: string) => {
                                 class="size-8 text-muted-foreground hover:text-rose-600"
                                 @click="deleteNotification(notification.id)"
                                 title="Delete"
+                                aria-label="Delete notification"
                             >
                                 <Trash2 class="size-4" />
                             </Button>
@@ -255,8 +257,8 @@ const getIconColor = (type: string) => {
                 <!-- Empty State -->
                 <div v-else class="py-16 text-center text-muted-foreground">
                     <Bell class="mx-auto size-12 opacity-30 mb-3" />
-                    <h3 class="text-base font-semibold text-foreground">No notifications</h3>
-                    <p class="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
+                    <h3 class="text-base font-semibold text-foreground text-balance">No notifications</h3>
+                    <p class="text-sm text-muted-foreground mt-1 max-w-sm mx-auto text-pretty">
                         {{ filter === 'unread' ? "You're all caught up! No unread notifications." : 'You have no notifications in your activity feed.' }}
                     </p>
                 </div>

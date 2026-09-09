@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
+use App\Domain\TenantAdmin\Actions\ProvisionTenantDatabase;
+use App\Enums\TenantStatus;
+use App\Models\Tenant;
+use Illuminate\Support\Str;
+
 class CreateNewUser implements CreatesNewUsers
 {
     use PasswordValidationRules, ProfileValidationRules;
@@ -23,19 +28,76 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
-        Validator::make($input, [
+        $isTenantContext = function_exists('tenant') && tenant() !== null;
+
+        $rules = [
             ...$this->profileRules(),
             'password' => $this->passwordRules(),
             'invite_token' => ['nullable', 'string'],
+        ];
+
+        if (! $isTenantContext) {
+            $rules['workspace_name'] = ['required', 'string', 'max:100'];
+            $rules['subdomain'] = [
+                'required',
+                'string',
+                'min:3',
+                'max:50',
+                'regex:/^[a-z0-9-]+$/',
+                'unique:tenants,id',
+                'not_in:admin,api,app,central,billing,support,mail,root,system,onboarding,dashboard,login,register',
+            ];
+        }
+
+        Validator::make($input, $rules, [
+            'subdomain.regex' => 'The workspace URL may only contain lowercase letters, numbers, and dashes.',
+            'subdomain.unique' => 'This workspace URL is already taken.',
+            'subdomain.not_in' => 'This workspace URL is reserved.',
         ])->validate();
 
-        return DB::transaction(function () use ($input) {
+        return DB::transaction(function () use ($input, $isTenantContext) {
             $user = User::create([
                 'name' => $input['name'],
                 'email' => $input['email'],
                 'password' => $input['password'],
                 'status' => UserStatus::Active,
             ]);
+
+            // If registering on the Central Domain, create and provision the Tenant
+            if (! $isTenantContext) {
+                $subdomain = Str::lower($input['subdomain']);
+                $tenant = Tenant::create([
+                    'id' => $subdomain,
+                    'name' => $input['workspace_name'],
+                    'email' => $input['email'],
+                    'plan' => 'trial',
+                    'status' => TenantStatus::Provisioning,
+                    'data' => [
+                        'provisioning_step' => 'initializing',
+                        'creator_user_id' => $user->id,
+                    ],
+                ]);
+
+                $centralDomain = config('tenancy.central_domains.0') ?? request()->getHost();
+                $tenant->domains()->create([
+                    'domain' => $subdomain.'.'.$centralDomain,
+                ]);
+                $tenant->domains()->create([
+                    'domain' => $subdomain,
+                ]);
+
+                // Dispatch asynchronous database provisioning
+                ProvisionTenantDatabase::dispatch(
+                    $tenant,
+                    $user->name,
+                    $user->email,
+                    $input['password']
+                );
+
+                session(['onboarding_tenant_id' => $tenant->id]);
+
+                return $user;
+            }
 
             // Handle multi-tenant team & invite onboarding if teams table is present
             if (\Illuminate\Support\Facades\Schema::hasTable('teams')) {

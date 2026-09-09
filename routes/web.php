@@ -47,4 +47,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Central unauthenticated payment webhooks
 Route::post('/webhooks/stripe', [StripeWebhookController::class, 'handleWebhook'])->name('cashier.webhook');
 
+// Central Tenant Onboarding Progress Routes
+Route::get('/onboarding/{tenant}', [\App\Http\Controllers\Central\OnboardingController::class, 'show'])->name('onboarding.show');
+Route::get('/onboarding/{tenant}/status', [\App\Http\Controllers\Central\OnboardingController::class, 'status'])->name('onboarding.status');
+Route::post('/onboarding/{tenant}/retry', [\App\Http\Controllers\Central\OnboardingController::class, 'retry'])->name('onboarding.retry');
+
 require __DIR__.'/settings.php';

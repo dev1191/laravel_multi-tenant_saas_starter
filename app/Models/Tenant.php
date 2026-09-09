@@ -116,6 +116,83 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     }
 
     /**
+     * Check if tenant provisioning failed.
+     */
+    public function isFailed(): bool
+    {
+        return $this->status === TenantStatus::Failed || $this->status === 'failed';
+    }
+
+    /**
+     * Get current provisioning step.
+     */
+    public function getProvisioningStep(): string
+    {
+        $step = $this->getAttribute('provisioning_step');
+        if (! empty($step)) {
+            return $step;
+        }
+
+        $data = $this->getAttribute('data');
+        if (is_array($data) && ! empty($data['provisioning_step'])) {
+            return $data['provisioning_step'];
+        }
+
+        return $this->isProvisioning() ? 'initializing' : 'completed';
+    }
+
+    /**
+     * Get provisioning progress percentage (0-100).
+     */
+    public function getProvisioningPercent(): int
+    {
+        return match ($this->getProvisioningStep()) {
+            'initializing' => 10,
+            'creating_database' => 35,
+            'migrating_database' => 65,
+            'seeding_defaults' => 90,
+            'completed' => 100,
+            'failed' => 0,
+            default => 20,
+        };
+    }
+
+    /**
+     * Get provisioning error message if any.
+     */
+    public function getProvisioningError(): ?string
+    {
+        $error = $this->getAttribute('provisioning_error');
+        if (! empty($error)) {
+            return $error;
+        }
+
+        $data = $this->getAttribute('data');
+        if (is_array($data) && ! empty($data['provisioning_error'])) {
+            return $data['provisioning_error'];
+        }
+
+        return null;
+    }
+
+    /**
+     * Update provisioning step and optional error state.
+     */
+    public function setProvisioningStep(string $step, ?string $error = null): void
+    {
+        $this->provisioning_step = $step;
+        $this->provisioning_step_updated_at = now()->toISOString();
+
+        if ($error !== null) {
+            $this->provisioning_error = $error;
+        } elseif ($step !== 'failed') {
+            $this->provisioning_error = null;
+        }
+
+        $this->save();
+    }
+
+    /**
      * Get primary domain name.
      */
     public function getPrimaryDomainAttribute(): ?string

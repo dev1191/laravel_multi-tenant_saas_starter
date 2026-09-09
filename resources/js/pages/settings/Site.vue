@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import { computed, ref, watch } from 'vue';
-import AppLayout from '@/layouts/settings/Layout.vue';
-import { useAppearance } from '@/composables/useAppearance';
-import CurrencySelect from '@/components/CurrencySelect.vue';
-import TimezoneSelect from '@/components/TimezoneSelect.vue';
-import LanguageSelect from '@/components/LanguageSelect.vue';
-import FileUpload from '@/components/FileUpload.vue';
-import ThemeModeSelect from '@/components/ThemeModeSelect.vue';
 import { Check, Eye, Globe, Laptop, Mail, Monitor, Moon, Palette, Plus, Save, Send, Server, Settings, Smartphone, Sparkles, Sun } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
+import CurrencySelect from '@/components/CurrencySelect.vue';
+import FileUpload from '@/components/FileUpload.vue';
+import LanguageSelect from '@/components/LanguageSelect.vue';
+import ThemeModeSelect from '@/components/ThemeModeSelect.vue';
+import TimezoneSelect from '@/components/TimezoneSelect.vue';
+import { useAppearance } from '@/composables/useAppearance';
+import AppLayout from '@/layouts/settings/Layout.vue';
 
 interface Locale {
     id: number;
@@ -63,7 +63,7 @@ const settingsForm = useForm({
     logo_light_path: props.settings.logo_light_path || props.settings.logo_path || '',
     logo_dark_path: props.settings.logo_dark_path || '',
     primary_color: props.settings.primary_color,
-    theme: props.settings.theme || 'system',
+    theme: ((props.settings.theme as 'light' | 'dark' | 'system') || 'system') as 'light' | 'dark' | 'system',
     default_locale: props.settings.default_locale,
     default_currency: props.settings.default_currency,
     timezone: props.settings.timezone,
@@ -121,6 +121,7 @@ const previewUrl = computed(() => {
         site_name: settingsForm.site_name || '',
         primary_color: settingsForm.primary_color || '#4f46e5',
     });
+
     return `/settings/site/email-preview?${params.toString()}`;
 });
 
@@ -139,6 +140,7 @@ const onPresetLanguageChange = (e: Event) => {
     selectedPresetLanguage.value = code;
 
     const found = (props.available_languages || []).find((l) => l.code === code);
+
     if (found) {
         localeForm.code = found.code;
         localeForm.name = found.name;
@@ -174,8 +176,8 @@ const breadcrumbs = [
             <!-- Header with Title and Global Save Action -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-5">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight">{{ $t('settings.general') || 'Workspace Settings' }}</h1>
-                    <p class="text-sm text-muted-foreground mt-0.5">
+                    <h1 class="text-2xl font-bold tracking-tight text-balance">{{ $t('settings.general') || 'Workspace Settings' }}</h1>
+                    <p class="text-sm text-muted-foreground mt-0.5 text-pretty">
                         {{ $t('settings.localization') || 'Customize your workspace branding, regional preferences, mail delivery, and translations.' }}
                     </p>
                 </div>
@@ -187,7 +189,7 @@ const breadcrumbs = [
                         :disabled="settingsForm.processing"
                         class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-lg text-sm font-semibold shadow-sm transition cursor-pointer"
                     >
-                        <Save class="w-4 h-4" />
+                        <Save class="size-4" />
                         <span>{{ settingsForm.processing ? 'Saving...' : ($t('common.save') || 'Save Changes') }}</span>
                     </button>
                 </div>
@@ -205,7 +207,7 @@ const breadcrumbs = [
                             : 'text-muted-foreground hover:text-foreground'
                     ]"
                 >
-                    <Palette class="w-4 h-4 text-indigo-500" />
+                    <Palette class="size-4 text-indigo-500" />
                     <span>Branding & Visuals</span>
                 </button>
 
@@ -219,7 +221,7 @@ const breadcrumbs = [
                             : 'text-muted-foreground hover:text-foreground'
                     ]"
                 >
-                    <Globe class="w-4 h-4 text-blue-500" />
+                    <Globe class="size-4 text-blue-500" />
                     <span>Regional & Languages</span>
                 </button>
 
@@ -233,7 +235,7 @@ const breadcrumbs = [
                             : 'text-muted-foreground hover:text-foreground'
                     ]"
                 >
-                    <Mail class="w-4 h-4 text-emerald-500" />
+                    <Mail class="size-4 text-emerald-500" />
                     <span>Mail Server & SMTP</span>
                 </button>
 
@@ -247,7 +249,7 @@ const breadcrumbs = [
                             : 'text-muted-foreground hover:text-foreground'
                     ]"
                 >
-                    <Eye class="w-4 h-4 text-purple-500" />
+                    <Eye class="size-4 text-purple-500" />
                     <span>Live Email Preview</span>
                 </button>
             </div>
@@ -256,10 +258,10 @@ const breadcrumbs = [
             <div v-show="activeTab === 'branding'" class="space-y-6">
                 <div class="rounded-xl border bg-card p-6 shadow-sm space-y-6">
                     <div class="flex items-center gap-2 border-b pb-4">
-                        <Palette class="w-5 h-5 text-indigo-500" />
+                        <Palette class="size-5 text-indigo-500" />
                         <div>
-                            <h2 class="text-base font-semibold">{{ $t('settings.appearance') || 'Workspace Identity & Colors' }}</h2>
-                            <p class="text-xs text-muted-foreground">Define your workspace name, primary brand colors, and logos.</p>
+                            <h2 class="text-base font-semibold text-balance">{{ $t('settings.appearance') || 'Workspace Identity & Colors' }}</h2>
+                            <p class="text-xs text-muted-foreground text-pretty">Define your workspace name, primary brand colors, and logos.</p>
                         </div>
                     </div>
 
@@ -286,7 +288,7 @@ const breadcrumbs = [
                                 <input
                                     v-model="settingsForm.primary_color"
                                     type="text"
-                                    class="flex-1 px-3 py-2 border rounded-lg text-sm bg-transparent font-mono"
+                                    class="flex-1 px-3 py-2 border rounded-lg text-sm bg-transparent font-mono tabular-nums"
                                 />
                             </div>
                         </div>
@@ -329,10 +331,10 @@ const breadcrumbs = [
                 <!-- Regional Preferences Card -->
                 <div class="rounded-xl border bg-card p-6 shadow-sm space-y-5">
                     <div class="flex items-center gap-2 border-b pb-4">
-                        <Globe class="w-5 h-5 text-blue-500" />
+                        <Globe class="size-5 text-blue-500" />
                         <div>
-                            <h2 class="text-base font-semibold">Regional Defaults & Timezone</h2>
-                            <p class="text-xs text-muted-foreground">Configure default language, operating currency, and member signup settings.</p>
+                            <h2 class="text-base font-semibold text-balance">Regional Defaults & Timezone</h2>
+                            <p class="text-xs text-muted-foreground text-pretty">Configure default language, operating currency, and member signup settings.</p>
                         </div>
                     </div>
 
@@ -380,15 +382,15 @@ const breadcrumbs = [
                 <div class="rounded-xl border bg-card p-6 shadow-sm">
                     <div class="flex items-center justify-between mb-4 border-b pb-4">
                         <div>
-                            <h2 class="text-base font-semibold">{{ $t('settings.languages') || 'Configured Languages & RTL' }}</h2>
-                            <p class="text-xs text-muted-foreground">Supported language options available to users in this workspace.</p>
+                            <h2 class="text-base font-semibold text-balance">{{ $t('settings.languages') || 'Configured Languages & RTL' }}</h2>
+                            <p class="text-xs text-muted-foreground text-pretty">Supported language options available to users in this workspace.</p>
                         </div>
                         <button
                             type="button"
                             @click="openAddLocaleModal"
                             class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-lg text-xs font-medium transition cursor-pointer"
                         >
-                            <Plus class="w-3.5 h-3.5" />
+                            <Plus class="size-3.5" />
                             <span>{{ $t('language.management') || 'Add Language' }}</span>
                         </button>
                     </div>
@@ -421,10 +423,10 @@ const breadcrumbs = [
                 <div class="rounded-xl border bg-card p-6 shadow-sm space-y-5">
                     <div class="flex items-center justify-between border-b pb-4">
                         <div class="flex items-center gap-2">
-                            <Mail class="w-5 h-5 text-emerald-500" />
+                            <Mail class="size-5 text-emerald-500" />
                             <div>
-                                <h2 class="text-base font-semibold">Mail Server & White-Label Delivery</h2>
-                                <p class="text-xs text-muted-foreground">Configure custom SMTP servers for white-labeled transactional email delivery.</p>
+                                <h2 class="text-base font-semibold text-balance">Mail Server & White-Label Delivery</h2>
+                                <p class="text-xs text-muted-foreground text-pretty">Configure custom SMTP servers for white-labeled transactional email delivery.</p>
                             </div>
                         </div>
                         <button
@@ -432,7 +434,7 @@ const breadcrumbs = [
                             @click="showTestEmailModal = true"
                             class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300 dark:hover:bg-emerald-900/60 rounded-lg text-xs font-medium transition cursor-pointer"
                         >
-                            <Send class="w-3.5 h-3.5" />
+                            <Send class="size-3.5" />
                             <span>Send Test Email</span>
                         </button>
                     </div>
@@ -468,7 +470,7 @@ const breadcrumbs = [
                                         v-model="settingsForm.mail_port"
                                         type="number"
                                         placeholder="587"
-                                        class="w-full px-3 py-2 border rounded-lg text-sm bg-transparent font-mono"
+                                        class="w-full px-3 py-2 border rounded-lg text-sm bg-transparent font-mono tabular-nums"
                                     />
                                     <p v-if="settingsForm.errors.mail_port" class="text-xs text-red-500 mt-1">{{ settingsForm.errors.mail_port }}</p>
                                 </div>
@@ -537,10 +539,10 @@ const breadcrumbs = [
                 <div class="rounded-xl border bg-card p-6 shadow-sm space-y-5">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
                         <div class="flex items-center gap-2">
-                            <Eye class="w-5 h-5 text-purple-500" />
+                            <Eye class="size-5 text-purple-500" />
                             <div>
-                                <h2 class="text-base font-semibold">Email Template & Live Simulation</h2>
-                                <p class="text-xs text-muted-foreground">Interactive preview of how invitations appear to recipients with your branding.</p>
+                                <h2 class="text-base font-semibold text-balance">Email Template & Live Simulation</h2>
+                                <p class="text-xs text-muted-foreground text-pretty">Interactive preview of how invitations appear to recipients with your branding.</p>
                             </div>
                         </div>
 
@@ -554,7 +556,7 @@ const breadcrumbs = [
                                     previewDevice === 'desktop' ? 'bg-background shadow-xs text-foreground font-semibold' : 'text-muted-foreground hover:text-foreground'
                                 ]"
                             >
-                                <Laptop class="w-3.5 h-3.5" />
+                                <Laptop class="size-3.5" />
                                 <span>Desktop (580px)</span>
                             </button>
                             <button
@@ -565,7 +567,7 @@ const breadcrumbs = [
                                     previewDevice === 'mobile' ? 'bg-background shadow-xs text-foreground font-semibold' : 'text-muted-foreground hover:text-foreground'
                                 ]"
                             >
-                                <Smartphone class="w-3.5 h-3.5" />
+                                <Smartphone class="size-3.5" />
                                 <span>Mobile (375px)</span>
                             </button>
                         </div>
@@ -589,7 +591,7 @@ const breadcrumbs = [
                     </div>
 
                     <div class="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Sparkles class="w-4 h-4 text-amber-500 shrink-0" />
+                        <Sparkles class="size-4 text-amber-500 shrink-0" />
                         <span>Live simulation updates dynamically with your configured <strong>Workspace Name ({{ settingsForm.site_name }})</strong> and <strong>Brand Accent ({{ settingsForm.primary_color }})</strong>.</span>
                     </div>
                 </div>
@@ -601,7 +603,7 @@ const breadcrumbs = [
                 class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-xs"
             >
                 <div class="bg-card w-full max-w-sm rounded-xl border shadow-xl p-6">
-                    <h3 class="text-base font-bold mb-3">{{ $t('language.management') || 'Add Supported Locale' }}</h3>
+                    <h3 class="text-base font-bold mb-3 text-balance">{{ $t('language.management') || 'Add Supported Locale' }}</h3>
                     <form @submit.prevent="addLocale" class="space-y-3">
                         <div>
                             <label class="block text-xs text-muted-foreground mb-1">Choose from Available Languages</label>
@@ -677,8 +679,8 @@ const breadcrumbs = [
                 class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-xs"
             >
                 <div class="bg-card w-full max-w-sm rounded-xl border shadow-xl p-6">
-                    <h3 class="text-base font-bold mb-2">Send Test Verification Email</h3>
-                    <p class="text-xs text-muted-foreground mb-4">Send a live test message to verify your workspace mail credentials.</p>
+                    <h3 class="text-base font-bold mb-2 text-balance">Send Test Verification Email</h3>
+                    <p class="text-xs text-muted-foreground mb-4 text-pretty">Send a live test message to verify your workspace mail credentials.</p>
                     <form @submit.prevent="sendTestEmail" class="space-y-3">
                         <div>
                             <label class="block text-xs text-muted-foreground mb-1">Recipient Email Address</label>
@@ -700,7 +702,7 @@ const breadcrumbs = [
                                 :disabled="testEmailForm.processing"
                                 class="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs cursor-pointer"
                             >
-                                <Send class="w-3 h-3" />
+                                <Send class="size-3" />
                                 <span>Send Test</span>
                             </button>
                         </div>

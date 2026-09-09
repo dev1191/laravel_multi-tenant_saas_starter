@@ -1,17 +1,5 @@
 <script setup lang="ts">
 import { Head, router, useForm, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
-import AppLayout from '@/layouts/AppLayout.vue';
-import RoleSelect, { type RoleOption } from '@/components/RoleSelect.vue';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableEmpty,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
 import {
     ArrowUpDown,
     Check,
@@ -33,6 +21,19 @@ import {
     Users,
     X,
 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+import RoleSelect from '@/components/RoleSelect.vue';
+import type {RoleOption} from '@/components/RoleSelect.vue';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableEmpty,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
+import AppLayout from '@/layouts/AppLayout.vue';
 
 interface Member {
     id: number;
@@ -170,6 +171,7 @@ const filteredMembers = computed(() => {
 
     list.sort((a, b) => {
         let comparison = 0;
+
         if (sortBy.value === 'name') {
             comparison = a.name.localeCompare(b.name);
         } else if (sortBy.value === 'role') {
@@ -188,6 +190,7 @@ const filteredMembers = computed(() => {
 const totalPages = computed(() => Math.ceil(filteredMembers.value.length / perPage.value) || 1);
 const paginatedMembers = computed(() => {
     const start = (currentPage.value - 1) * perPage.value;
+
     return filteredMembers.value.slice(start, start + perPage.value);
 });
 
@@ -225,9 +228,11 @@ const getAvatarColorClasses = (name: string) => {
         'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
     ];
     let hash = 0;
+
     for (let i = 0; i < name.length; i++) {
         hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
+
     return colors[Math.abs(hash) % colors.length];
 };
 
@@ -246,17 +251,17 @@ const breadcrumbs = [
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-6">
                 <div class="space-y-1">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-indigo-600/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-lg shadow-sm">
-                            <Users class="w-5 h-5" />
+                        <div class="size-10 rounded-xl bg-indigo-600/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-lg shadow-sm">
+                            <Users class="size-5" />
                         </div>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h1 class="text-2xl font-bold tracking-tight text-foreground">{{ team.name }}</h1>
-                                <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-neutral-800 text-muted-foreground border">
+                                <h1 class="text-2xl font-bold tracking-tight text-foreground text-balance">{{ team.name }}</h1>
+                                <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-neutral-800 text-muted-foreground border tabular-nums">
                                     {{ team.slug }}
                                 </span>
                             </div>
-                            <p class="text-xs text-muted-foreground">
+                            <p class="text-xs text-muted-foreground text-pretty">
                                 Manage workspace team members, role-based access control, and active invitations.
                             </p>
                         </div>
@@ -279,7 +284,7 @@ const breadcrumbs = [
                                 {{ t.name }} ({{ t.members_count || 0 }} members)
                             </option>
                         </select>
-                        <ChevronDown class="w-3.5 h-3.5 text-muted-foreground absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <ChevronDown class="size-3.5 text-muted-foreground absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
 
                     <!-- Invite Button -->
@@ -288,7 +293,7 @@ const breadcrumbs = [
                         @click="showInviteModal = true"
                         class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow-sm transition active:scale-[0.98] cursor-pointer"
                     >
-                        <UserPlus class="w-4 h-4" />
+                        <UserPlus class="size-4" />
                         <span>Invite Teammate</span>
                     </button>
                 </div>
@@ -299,40 +304,40 @@ const breadcrumbs = [
                 <div class="rounded-xl border bg-card p-4 shadow-sm flex items-center justify-between">
                     <div>
                         <p class="text-xs font-medium text-muted-foreground">Total Members</p>
-                        <p class="text-2xl font-bold tracking-tight mt-0.5 text-foreground">{{ totalMembersCount }}</p>
+                        <p class="text-2xl font-bold tracking-tight mt-0.5 text-foreground tabular-nums">{{ totalMembersCount }}</p>
                     </div>
-                    <div class="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-                        <Users class="w-5 h-5" />
+                    <div class="size-10 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                        <Users class="size-5" />
                     </div>
                 </div>
 
                 <div class="rounded-xl border bg-card p-4 shadow-sm flex items-center justify-between">
                     <div>
                         <p class="text-xs font-medium text-muted-foreground">Admins & Owners</p>
-                        <p class="text-2xl font-bold tracking-tight mt-0.5 text-foreground">{{ adminsCount }}</p>
+                        <p class="text-2xl font-bold tracking-tight mt-0.5 text-foreground tabular-nums">{{ adminsCount }}</p>
                     </div>
-                    <div class="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                        <Shield class="w-5 h-5" />
+                    <div class="size-10 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                        <Shield class="size-5" />
                     </div>
                 </div>
 
                 <div class="rounded-xl border bg-card p-4 shadow-sm flex items-center justify-between">
                     <div>
                         <p class="text-xs font-medium text-muted-foreground">Managers</p>
-                        <p class="text-2xl font-bold tracking-tight mt-0.5 text-foreground">{{ managersCount }}</p>
+                        <p class="text-2xl font-bold tracking-tight mt-0.5 text-foreground tabular-nums">{{ managersCount }}</p>
                     </div>
-                    <div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                        <UserCheck class="w-5 h-5" />
+                    <div class="size-10 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                        <UserCheck class="size-5" />
                     </div>
                 </div>
 
                 <div class="rounded-xl border bg-card p-4 shadow-sm flex items-center justify-between">
                     <div>
                         <p class="text-xs font-medium text-muted-foreground">Pending Invites</p>
-                        <p class="text-2xl font-bold tracking-tight mt-0.5 text-foreground">{{ pendingInvitesCount }}</p>
+                        <p class="text-2xl font-bold tracking-tight mt-0.5 text-foreground tabular-nums">{{ pendingInvitesCount }}</p>
                     </div>
-                    <div class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                        <Mail class="w-5 h-5" />
+                    <div class="size-10 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                        <Mail class="size-5" />
                     </div>
                 </div>
             </div>
@@ -381,7 +386,7 @@ const breadcrumbs = [
                     <!-- Control Bar: Search, Role Filter, Rows Per Page -->
                     <div class="flex flex-col md:flex-row items-center justify-between gap-3 bg-card p-3 rounded-xl border">
                         <div class="relative w-full md:w-80">
-                            <Search class="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <Search class="size-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                             <input
                                 v-model="searchQuery"
                                 type="text"
@@ -392,8 +397,9 @@ const breadcrumbs = [
                                 v-if="searchQuery"
                                 @click="searchQuery = ''"
                                 class="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5"
+                                aria-label="Clear search"
                             >
-                                <X class="w-3.5 h-3.5" />
+                                <X class="size-3.5" />
                             </button>
                         </div>
 
@@ -420,7 +426,7 @@ const breadcrumbs = [
                                 <select
                                     v-model="perPage"
                                     @change="currentPage = 1"
-                                    class="px-2 py-1.5 text-xs bg-background border rounded-lg font-medium cursor-pointer transition"
+                                    class="px-2.5 py-1.5 text-xs bg-background border rounded-lg font-medium cursor-pointer transition"
                                 >
                                     <option :value="10">10</option>
                                     <option :value="25">25</option>
@@ -439,19 +445,19 @@ const breadcrumbs = [
                                     <TableHead class="cursor-pointer select-none pl-4" @click="toggleSort('name')">
                                         <div class="flex items-center gap-1.5">
                                             <span>Member</span>
-                                            <ArrowUpDown class="w-3 h-3 opacity-60" />
+                                            <ArrowUpDown class="size-3 opacity-60" />
                                         </div>
                                     </TableHead>
                                     <TableHead class="cursor-pointer select-none" @click="toggleSort('role')">
                                         <div class="flex items-center gap-1.5">
                                             <span>Role & Permission</span>
-                                            <ArrowUpDown class="w-3 h-3 opacity-60" />
+                                            <ArrowUpDown class="size-3 opacity-60" />
                                         </div>
                                     </TableHead>
                                     <TableHead class="cursor-pointer select-none hidden md:table-cell" @click="toggleSort('joined')">
                                         <div class="flex items-center gap-1.5">
                                             <span>Date Joined</span>
-                                            <ArrowUpDown class="w-3 h-3 opacity-60" />
+                                            <ArrowUpDown class="size-3 opacity-60" />
                                         </div>
                                     </TableHead>
                                     <TableHead v-if="can_manage" class="pr-4 text-right">Actions</TableHead>
@@ -467,14 +473,14 @@ const breadcrumbs = [
                                         <div class="flex items-center gap-3">
                                             <div
                                                 :class="getAvatarColorClasses(member.name)"
-                                                class="w-9 h-9 rounded-full font-bold flex items-center justify-center text-sm shadow-xs shrink-0"
+                                                class="size-9 rounded-full font-bold flex items-center justify-center text-sm shadow-xs shrink-0"
                                             >
                                                 {{ member.name.charAt(0).toUpperCase() }}
                                             </div>
                                             <div>
                                                 <div class="flex items-center gap-1.5">
                                                     <span class="font-semibold text-foreground">{{ member.name }}</span>
-                                                    <Crown v-if="member.is_owner" class="w-3.5 h-3.5 text-amber-500 fill-amber-500" title="Workspace Owner" />
+                                                    <Crown v-if="member.is_owner" class="size-3.5 text-amber-500 fill-amber-500" title="Workspace Owner" />
                                                 </div>
                                                 <p class="text-xs text-muted-foreground">{{ member.email }}</p>
                                             </div>
@@ -486,15 +492,15 @@ const breadcrumbs = [
                                             :class="getRoleBadgeClasses(member.role)"
                                             class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider border shadow-xs"
                                         >
-                                            <Crown v-if="member.role === 'owner'" class="w-3 h-3" />
-                                            <Shield v-else-if="member.role === 'admin'" class="w-3 h-3" />
-                                            <UserCheck v-else-if="member.role === 'manager'" class="w-3 h-3" />
-                                            <Users v-else class="w-3 h-3" />
+                                            <Crown v-if="member.role === 'owner'" class="size-3" />
+                                            <Shield v-else-if="member.role === 'admin'" class="size-3" />
+                                            <UserCheck v-else-if="member.role === 'manager'" class="size-3" />
+                                            <Users v-else class="size-3" />
                                             <span>{{ member.role }}</span>
                                         </span>
                                     </TableCell>
 
-                                    <TableCell class="text-xs text-muted-foreground hidden md:table-cell">
+                                    <TableCell class="text-xs text-muted-foreground hidden md:table-cell tabular-nums">
                                         {{ member.joined_at || 'Initial Member' }}
                                     </TableCell>
 
@@ -504,8 +510,9 @@ const breadcrumbs = [
                                             @click="removeMember(member.id, member.name)"
                                             class="text-muted-foreground hover:text-red-600 dark:hover:text-red-400 p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer"
                                             title="Remove teammate"
+                                            aria-label="Remove teammate"
                                         >
-                                            <Trash2 class="w-4 h-4" />
+                                            <Trash2 class="size-4" />
                                         </button>
                                         <span v-else class="text-xs text-muted-foreground font-medium italic pr-2">Owner</span>
                                     </TableCell>
@@ -513,9 +520,9 @@ const breadcrumbs = [
 
                                 <TableEmpty v-if="paginatedMembers.length === 0" :colspan="can_manage ? 4 : 3">
                                     <div class="max-w-xs mx-auto space-y-2 py-4">
-                                        <Users class="w-8 h-8 mx-auto opacity-40" />
-                                        <p class="font-medium text-sm text-foreground">No members match your filter</p>
-                                        <p class="text-xs text-muted-foreground">Try adjusting your search query or role filter.</p>
+                                        <Users class="size-8 mx-auto opacity-40" />
+                                        <p class="font-medium text-sm text-foreground text-balance">No members match your filter</p>
+                                        <p class="text-xs text-muted-foreground text-pretty">Try adjusting your search query or role filter.</p>
                                         <button
                                             v-if="searchQuery || selectedRoleFilter !== 'all'"
                                             @click="searchQuery = ''; selectedRoleFilter = 'all'"
@@ -530,7 +537,7 @@ const breadcrumbs = [
 
                         <!-- Pagination Bar -->
                         <div class="p-3.5 border-t bg-gray-50/50 dark:bg-neutral-900/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
-                            <div>
+                            <div class="tabular-nums">
                                 Showing <strong class="text-foreground">{{ filteredMembers.length ? (currentPage - 1) * perPage + 1 : 0 }}</strong>
                                 to <strong class="text-foreground">{{ Math.min(currentPage * perPage, filteredMembers.length) }}</strong>
                                 of <strong class="text-foreground">{{ filteredMembers.length }}</strong> members
@@ -541,16 +548,18 @@ const breadcrumbs = [
                                     :disabled="currentPage <= 1"
                                     @click="currentPage--"
                                     class="p-1.5 border rounded-lg hover:bg-card disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                                    aria-label="Previous page"
                                 >
-                                    <ChevronLeft class="w-3.5 h-3.5" />
+                                    <ChevronLeft class="size-3.5" />
                                 </button>
-                                <span class="px-2 font-medium">Page {{ currentPage }} of {{ totalPages }}</span>
+                                <span class="px-2 font-medium tabular-nums">Page {{ currentPage }} of {{ totalPages }}</span>
                                 <button
                                     :disabled="currentPage >= totalPages"
                                     @click="currentPage++"
                                     class="p-1.5 border rounded-lg hover:bg-card disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                                    aria-label="Next page"
                                 >
-                                    <ChevronRight class="w-3.5 h-3.5" />
+                                    <ChevronRight class="size-3.5" />
                                 </button>
                             </div>
                         </div>
@@ -564,7 +573,7 @@ const breadcrumbs = [
                             <h3 class="text-sm font-semibold text-foreground">
                                 Pending Invitations ({{ invites.length }})
                             </h3>
-                            <p class="text-xs text-muted-foreground">
+                            <p class="text-xs text-muted-foreground text-pretty">
                                 Invites automatically expire after 7 days if unaccepted.
                             </p>
                         </div>
@@ -576,8 +585,8 @@ const breadcrumbs = [
                                 class="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-gray-50/50 dark:hover:bg-neutral-900/40 transition"
                             >
                                 <div class="flex items-center gap-3">
-                                    <div class="w-9 h-9 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-                                        <Mail class="w-4 h-4" />
+                                    <div class="size-9 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                                        <Mail class="size-4" />
                                     </div>
                                     <div>
                                         <div class="flex items-center gap-2">
@@ -589,8 +598,8 @@ const breadcrumbs = [
                                         <p class="text-xs text-muted-foreground flex items-center gap-1.5 mt-0.5">
                                             <span>Invited by {{ inv.invited_by }}</span>
                                             <span>&bull;</span>
-                                            <Clock class="w-3 h-3 inline" />
-                                            <span>Expires {{ inv.expires_at }}</span>
+                                            <Clock class="size-3 inline" />
+                                            <span class="tabular-nums">Expires {{ inv.expires_at }}</span>
                                         </p>
                                     </div>
                                 </div>
@@ -600,8 +609,8 @@ const breadcrumbs = [
                                         @click="copyInviteLink(inv)"
                                         class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-background hover:bg-gray-100 dark:hover:bg-neutral-800 border text-xs font-medium rounded-lg shadow-xs transition cursor-pointer"
                                     >
-                                        <Check v-if="copiedInviteId === inv.id" class="w-3.5 h-3.5 text-emerald-500" />
-                                        <Copy v-else class="w-3.5 h-3.5" />
+                                        <Check v-if="copiedInviteId === inv.id" class="size-3.5 text-emerald-500" />
+                                        <Copy v-else class="size-3.5" />
                                         <span>{{ copiedInviteId === inv.id ? 'Copied Link!' : 'Copy Invite Link' }}</span>
                                     </button>
 
@@ -610,16 +619,17 @@ const breadcrumbs = [
                                         @click="revokeInvite(inv.id, inv.email)"
                                         class="text-muted-foreground hover:text-red-600 dark:hover:text-red-400 p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/40 transition cursor-pointer"
                                         title="Revoke invitation"
+                                        aria-label="Revoke invitation"
                                     >
-                                        <Trash2 class="w-4 h-4" />
+                                        <Trash2 class="size-4" />
                                     </button>
                                 </div>
                             </div>
 
                             <div v-if="invites.length === 0" class="p-12 text-center text-muted-foreground">
-                                <Mail class="w-8 h-8 mx-auto opacity-40 mb-2" />
-                                <p class="text-sm font-medium text-foreground">No pending invitations</p>
-                                <p class="text-xs mt-1">When you invite new teammates, their pending tokens will appear here.</p>
+                                <Mail class="size-8 mx-auto opacity-40 mb-2" />
+                                <p class="text-sm font-medium text-foreground text-balance">No pending invitations</p>
+                                <p class="text-xs mt-1 text-pretty">When you invite new teammates, their pending tokens will appear here.</p>
                             </div>
                         </div>
                     </div>
@@ -635,17 +645,18 @@ const breadcrumbs = [
                     <button
                         @click="showInviteModal = false"
                         class="absolute right-4 top-4 text-muted-foreground hover:text-foreground p-1 rounded-lg transition cursor-pointer"
+                        aria-label="Close modal"
                     >
-                        <X class="w-4 h-4" />
+                        <X class="size-4" />
                     </button>
 
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
-                            <UserPlus class="w-5 h-5" />
+                        <div class="size-10 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
+                            <UserPlus class="size-5" />
                         </div>
                         <div>
-                            <h2 class="text-lg font-bold tracking-tight text-foreground">Invite Teammate</h2>
-                            <p class="text-xs text-muted-foreground">
+                            <h2 class="text-lg font-bold tracking-tight text-foreground text-balance">Invite Teammate</h2>
+                            <p class="text-xs text-muted-foreground text-pretty">
                                 Send an invitation link to join <strong>{{ team.name }}</strong>.
                             </p>
                         </div>

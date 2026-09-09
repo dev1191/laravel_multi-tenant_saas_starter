@@ -15,6 +15,7 @@ export function updateBrandColor(color: string): void {
     if (typeof document === 'undefined' || !color) {
         return;
     }
+
     document.documentElement.style.setProperty('--tenant-primary', color);
 }
 

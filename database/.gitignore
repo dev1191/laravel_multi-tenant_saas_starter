@@ -1,2 +1,5 @@
 tenant_*
 !database.sqlite
+!tenant_acme.sqlite
+!tenant_stark.sqlite
+!tenant_wayne.sqlite

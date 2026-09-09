@@ -26,7 +26,9 @@ return [
      * Only relevant if you're using the domain or subdomain identification middleware.
      */
     'central_domains' => array_values(array_unique(array_filter([
-        env('CENTRAL_DOMAIN', 'tenantforge.test'),
+        env('CENTRAL_DOMAIN'),
+        parse_url((string) env('APP_URL'), PHP_URL_HOST),
+        env('RENDER_EXTERNAL_HOSTNAME'),
         'tenantforge.test',
         '127.0.0.1',
         'localhost',

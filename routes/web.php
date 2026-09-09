@@ -44,9 +44,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 });
 
-// Central unauthenticated payment webhooks
-Route::post('/webhooks/stripe', [StripeWebhookController::class, 'handleWebhook'])->name('cashier.webhook');
-
 // Central Tenant Onboarding Progress Routes
 Route::get('/onboarding/{tenant}', [\App\Http\Controllers\Central\OnboardingController::class, 'show'])->name('onboarding.show');
 Route::get('/onboarding/{tenant}/status', [\App\Http\Controllers\Central\OnboardingController::class, 'status'])->name('onboarding.status');

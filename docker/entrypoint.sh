@@ -40,11 +40,11 @@ if [ "${RUN_MIGRATIONS}" = "true" ]; then
     php artisan migrate --force || true
 fi
 
-# Cache configuration, routes, and views if in production
+# Clear and optimize configuration and views if in production
 if [ "${APP_ENV}" = "production" ]; then
     echo "Optimizing Laravel for production..."
+    php artisan route:clear || true
     php artisan config:cache || true
-    php artisan route:cache || true
     php artisan view:cache || true
 fi
 

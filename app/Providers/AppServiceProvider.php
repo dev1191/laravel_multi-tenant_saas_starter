@@ -43,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
                 ->visible(outsidePanels: false);
         });
 
+        Cashier::ignoreRoutes();
         Cashier::useCustomerModel(Tenant::class);
         Cashier::calculateTaxes();
 

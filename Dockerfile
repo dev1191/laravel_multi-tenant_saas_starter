@@ -1,7 +1,7 @@
 # ==============================================================================
-# Application Runtime (FrankenPHP + PHP 8.3 Alpine)
+# Application Runtime (FrankenPHP + PHP 8.4 Alpine)
 # ==============================================================================
-FROM dunglas/frankenphp:1-php8.3-alpine AS runtime
+FROM dunglas/frankenphp:1-php8.4-alpine AS runtime
 
 # Install system dependencies
 RUN apk add --no-cache \

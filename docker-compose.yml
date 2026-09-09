@@ -1,0 +1,94 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tenantforge-app:latest
+    container_name: tenantforge-app
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    environment:
+      APP_NAME: TenantForge
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      CENTRAL_DOMAIN: localhost
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /var/www/html/database/database.sqlite
+      QUEUE_CONNECTION: redis
+      CACHE_STORE: redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      RUN_MIGRATIONS: "true"
+    volumes:
+      - storage_data:/var/www/html/storage
+      - database_data:/var/www/html/database
+    depends_on:
+      - redis
+      - mailpit
+
+  queue:
+    image: tenantforge-app:latest
+    container_name: tenantforge-queue
+    restart: unless-stopped
+    command: ["php", "artisan", "queue:work", "--tries=3", "--timeout=90"]
+    environment:
+      APP_NAME: TenantForge
+      APP_ENV: local
+      APP_DEBUG: "true"
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /var/www/html/database/database.sqlite
+      QUEUE_CONNECTION: redis
+      CACHE_STORE: redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MAIL_MAILER: smtp
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+    volumes:
+      - storage_data:/var/www/html/storage
+      - database_data:/var/www/html/database
+    depends_on:
+      - app
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    container_name: tenantforge-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  mysql:
+    image: mysql:8.0
+    container_name: tenantforge-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: tenantforge
+      MYSQL_USER: tenantforge
+      MYSQL_PASSWORD: secretpassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: tenantforge-mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
+
+volumes:
+  storage_data:
+  database_data:
+  redis_data:
+  mysql_data:

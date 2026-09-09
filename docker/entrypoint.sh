@@ -45,5 +45,5 @@ if [ "${APP_ENV}" = "production" ]; then
     php artisan view:cache || true
 fi
 
-# Execute main process (e.g. supervisord or custom command)
+# Execute main process (FrankenPHP or artisan command)
 exec "$@"

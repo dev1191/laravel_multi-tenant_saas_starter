@@ -8,7 +8,11 @@ services:
     restart: unless-stopped
     ports:
       - "8000:80"
+      - "8443:443"
+      - "8443:443/udp" # HTTP/3
     environment:
+      SERVER_NAME: ":80"
+      CADDY_GLOBAL_OPTIONS: "auto_https off"
       APP_NAME: TenantForge
       APP_ENV: local
       APP_DEBUG: "true"
@@ -27,6 +31,8 @@ services:
     volumes:
       - storage_data:/var/www/html/storage
       - database_data:/var/www/html/database
+      - caddy_data:/data
+      - caddy_config:/config
     depends_on:
       - redis
       - mailpit
@@ -92,3 +98,5 @@ volumes:
   database_data:
   redis_data:
   mysql_data:
+  caddy_data:
+  caddy_config:

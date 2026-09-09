@@ -1,0 +1,19 @@
+{
+	{$CADDY_GLOBAL_OPTIONS}
+	frankenphp
+}
+
+{$SERVER_NAME:http://:80} {
+	root * /var/www/html/public
+	encode zstd br gzip
+
+	# Security Headers
+	header {
+		X-Frame-Options "SAMEORIGIN"
+		X-Content-Type-Options "nosniff"
+		X-XSS-Protection "1; mode=block"
+	}
+
+	# Run Laravel with native FrankenPHP
+	php_server
+}

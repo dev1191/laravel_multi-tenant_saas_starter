@@ -68,8 +68,8 @@ RUN chmod +x /usr/local/bin/entrypoint.sh && \
     chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database && \
     chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 
-# Expose HTTP and HTTPS ports (TCP and UDP for HTTP/3)
-EXPOSE 80 443 443/udp
+# Expose HTTP port (80 for local, 10000 for Render)
+EXPOSE 80 10000
 
 # Configure entrypoint and default FrankenPHP process
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

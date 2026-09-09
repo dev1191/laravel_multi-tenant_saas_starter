@@ -20,6 +20,7 @@ RUN apk add --no-cache \
 # Install required PHP extensions for Laravel, Stancl Tenancy, Filament, and Cashier
 RUN install-php-extensions \
     bcmath \
+    exif \
     gd \
     intl \
     opcache \
@@ -39,12 +40,19 @@ WORKDIR /var/www/html
 
 # Set Composer environment
 ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV COMPOSER_MEMORY_LIMIT=-1
 
 # Copy application source code (including composer manifests and pre-built public/build assets)
 COPY . .
 
 # Install Composer dependencies and generate optimized autoloader
-RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --no-scripts
+RUN composer install \
+    --no-dev \
+    --prefer-dist \
+    --no-interaction \
+    --optimize-autoloader \
+    --no-scripts \
+    --ignore-platform-reqs
 
 # Copy custom configurations
 COPY docker/Caddyfile /etc/caddy/Caddyfile

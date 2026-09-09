@@ -20,11 +20,11 @@ fi
 # Ensure correct file permissions
 chown -R www-data:www-data /var/www/html/storage \
                            /var/www/html/bootstrap/cache \
-                           /var/www/html/database
+                           /var/www/html/database || true
 
 chmod -R 775 /var/www/html/storage \
              /var/www/html/bootstrap/cache \
-             /var/www/html/database
+             /var/www/html/database || true
 
 # Create storage symlink if missing
 if [ ! -L /var/www/html/public/storage ]; then

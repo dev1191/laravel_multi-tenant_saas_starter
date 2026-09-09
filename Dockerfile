@@ -15,7 +15,11 @@ RUN apk add --no-cache \
     libjpeg-turbo-dev \
     freetype-dev \
     icu-dev \
-    libzip-dev
+    libzip-dev \
+    libcap
+
+# Remove capabilities from FrankenPHP binary for unprivileged container environments (e.g. Render Free Tier)
+RUN setcap -r /usr/local/bin/frankenphp || true && chmod +x /usr/local/bin/frankenphp
 
 # Install required PHP extensions for Laravel, Stancl Tenancy, Filament, and Cashier
 RUN install-php-extensions \

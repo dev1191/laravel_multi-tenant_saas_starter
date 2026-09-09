@@ -37,15 +37,14 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Install Composer dependencies (cached layer)
-COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction
+# Set Composer environment
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# Copy application source code (including pre-built public/build assets)
+# Copy application source code (including composer manifests and pre-built public/build assets)
 COPY . .
 
-# Complete composer autoload generation
-RUN composer dump-autoload --optimize --no-dev --no-interaction
+# Install Composer dependencies and generate optimized autoloader
+RUN composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader --no-scripts
 
 # Copy custom configurations
 COPY docker/Caddyfile /etc/caddy/Caddyfile

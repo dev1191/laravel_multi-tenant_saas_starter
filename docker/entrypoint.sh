@@ -31,6 +31,9 @@ if [ ! -L /var/www/html/public/storage ]; then
     php artisan storage:link || true
 fi
 
+# Discover Laravel and package service providers
+php artisan package:discover --ansi || true
+
 # Run database migrations if RUN_MIGRATIONS is set to true
 if [ "${RUN_MIGRATIONS}" = "true" ]; then
     echo "Running database migrations..."

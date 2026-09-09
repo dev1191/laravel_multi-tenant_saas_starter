@@ -40,5 +40,5 @@ files/
 !/storage/framework/cache/.gitignore
 !/storage/framework/sessions/.gitignore
 !/storage/framework/views/.gitignore
-database/*.sqlite*
 database/tenant*
+!database/database.sqlite

@@ -65,6 +65,7 @@ COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # Fix permissions for scripts and web directories
 RUN chmod +x /usr/local/bin/entrypoint.sh && \
+    rm -f /var/www/html/bootstrap/cache/*.php && \
     chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database && \
     chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 

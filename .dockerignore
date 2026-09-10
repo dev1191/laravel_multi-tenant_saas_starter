@@ -14,6 +14,8 @@ storage/framework/sessions/*
 storage/framework/views/*
 storage/logs/*
 !storage/logs/.gitignore
+bootstrap/cache/*
+!bootstrap/cache/.gitignore
 tests
 .env
 .env.*

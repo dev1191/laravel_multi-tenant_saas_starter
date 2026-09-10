@@ -31,6 +31,16 @@ if [ ! -L /var/www/html/public/storage ]; then
     php artisan storage:link || true
 fi
 
+# Clear any stale cached packages and services
+rm -f /var/www/html/bootstrap/cache/packages.php \
+      /var/www/html/bootstrap/cache/services.php
+
+# Ensure APP_KEY is set
+if [ -z "${APP_KEY}" ]; then
+    echo "APP_KEY is not set. Generating fallback application key..."
+    export APP_KEY=$(php artisan key:generate --show)
+fi
+
 # Discover Laravel and package service providers
 php artisan package:discover --ansi || true
 

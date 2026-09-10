@@ -5,6 +5,7 @@
 }
 
 http://:{$PORT:80} {
+	bind 0.0.0.0
 	root * /var/www/html/public
 	encode zstd br gzip
 

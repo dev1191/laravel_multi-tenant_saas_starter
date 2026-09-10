@@ -35,9 +35,15 @@ fi
 rm -f /var/www/html/bootstrap/cache/packages.php \
       /var/www/html/bootstrap/cache/services.php
 
-# Ensure APP_KEY is set
-if [ -z "${APP_KEY}" ]; then
-    echo "APP_KEY is not set. Generating fallback application key..."
+# Auto-detect Render environment and set domain defaults if missing
+if [ -n "${RENDER_EXTERNAL_HOSTNAME}" ]; then
+    export CENTRAL_DOMAIN="${CENTRAL_DOMAIN:-$RENDER_EXTERNAL_HOSTNAME}"
+    export APP_URL="${APP_URL:-https://$RENDER_EXTERNAL_HOSTNAME}"
+fi
+
+# Ensure APP_KEY is valid base64
+if [ -z "${APP_KEY}" ] || [ "${APP_KEY#base64:}" = "${APP_KEY}" ]; then
+    echo "APP_KEY is missing or not a base64 key. Generating valid key..."
     export APP_KEY=$(php artisan key:generate --show)
 fi
 
@@ -48,6 +54,7 @@ php artisan package:discover --ansi || true
 if [ "${RUN_MIGRATIONS}" = "true" ]; then
     echo "Running database migrations..."
     php artisan migrate --force || true
+    php artisan db:seed --force || true
 fi
 
 # Clear and optimize configuration and views if in production

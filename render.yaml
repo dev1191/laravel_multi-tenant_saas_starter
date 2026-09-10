@@ -12,11 +12,11 @@ services:
       - key: APP_DEBUG
         value: "false"
       - key: APP_KEY
-        generateValue: true
+        sync: false # Generate locally with `php artisan key:generate --show` and set in Render Dashboard
       - key: APP_URL
-        sync: false # e.g. https://tenantforge.onrender.com
+        sync: false # e.g. https://laravel-multi-tenant-saas-starter.onrender.com
       - key: CENTRAL_DOMAIN
-        sync: false # e.g. tenantforge.onrender.com
+        sync: false # e.g. laravel-multi-tenant-saas-starter.onrender.com
       - key: DB_CONNECTION
         value: sqlite
       - key: DB_DATABASE
